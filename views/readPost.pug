@@ -1,0 +1,12 @@
+extends layout
+
+block content
+    h1 title
+    p= data.title
+    h2 content
+    p= data.content
+    h5 create time : #{data.createTime}
+    h5 update time : #{data.updateTime}    
+    button(type="button", onclick="location.href='/updatePost?postNumber=" + data.postNumber + "'") udpate
+    button(type="button", onclick="location.href='/deletePost?postNumber=" + data.postNumber + "'") delete
+    button(type="button", onclick="location.href='/'") list
