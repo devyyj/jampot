@@ -12,6 +12,6 @@ let schema = new mongoose.Schema({
     updateTime:{type: Date, default: Date.now}
 })
 
-schema.plugin(mai.plugin, {model : 'board', field:'postNumber'} );
+schema.plugin(mai.plugin, {model : 'board', field:'postNumber', startAt: 1} );
 
 module.exports = mongoose.model('board', schema);

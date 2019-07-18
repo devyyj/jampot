@@ -2,15 +2,13 @@ extends layout
 
 block content
   .container
-    h1 Register Page
-    p.lead Say something worthwhile here.
+    h1 회원가입
     br
     form(role='form', action="/register",method="post", style='max-width: 300px;')
-      .form-group
-          input.form-control(type='text', name="username", placeholder='Enter Username')
-      .form-group
-        input.form-control(type='password', name="password", placeholder='Password')
-      button.btn.btn-default(type='submit') Submit
-      
+      input(type='text', name="username", placeholder='아이디')
+      p
+      input(type='password', name="password", placeholder='비밀번호')
+      p
+      button(type='submit') 가입
       a(href='/')
-        button.btn.btn-primary(type="button") Cancel
+        button(type="button") 취소

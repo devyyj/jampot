@@ -1,11 +1,11 @@
 extends layout
 
 block content    
-    form(action="/createPost?postNumber=" + data.postNumber, method="post")
-        p title
+    form(onkeypress="return event.keyCode != 13;" action="/createPost?postNumber=" + data.postNumber, method="post")
+        p 제목
         input(type="text", name="title", value= data.title)
-        p content
+        p 내용
         textarea(name="content", cols="30", rows="10")= data.content
         br
-        input(type="submit", value="submit")
-        input(type="button", value="cancel", onclick="location.href='/'")
+        input(type="submit", value="등록")
+        input(type="button", value="취소", onclick="location.href='/'")

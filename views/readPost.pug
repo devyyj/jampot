@@ -1,12 +1,11 @@
 extends layout
 
 block content
-    h1 title
+    h1 제목
     p= data.title
-    h2 content
+    h2 내용
     p= data.content
-    h5 create time : #{data.createTime}
-    h5 update time : #{data.updateTime}    
-    button(type="button", onclick="location.href='/updatePost?postNumber=" + data.postNumber + "'") udpate
-    button(type="button", onclick="location.href='/deletePost?postNumber=" + data.postNumber + "'") delete
-    button(type="button", onclick="location.href='/'") list
+    h5 등록시간 : #{moment(data.createTime).format("YYYY-MM-DD HH:mm:ss")}
+    button(type="button", onclick="location.href='/updatePost?postNumber=" + data.postNumber + "'") 수정
+    button(type="button", onclick="location.href='/deletePost?postNumber=" + data.postNumber + "'") 삭제
+    button(type="button", onclick="location.href='/'") 목록

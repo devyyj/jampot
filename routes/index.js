@@ -3,14 +3,17 @@ var passport = require('passport');
 var router = express.Router();
 let board = require('../models/board');
 var Account = require('../models/account');
+const moment = require('moment');
+require('moment-timezone');
+moment.tz.setDefault("Asia/Seoul");
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-  board.find(function (err, result) {
+  board.find().sort({ postNumber: -1 }).exec(function (err, result) {
     if (err) {
       res.render(err);
     } else {
-      res.render('index', { data: result, user: req.user });
+      res.render('index', { data: result, user: req.user, moment: moment });
     }
   })
 });
@@ -47,7 +50,7 @@ router.post('/createPost', function (req, res) {
       if (err) {
         res.render(err);
       } else {
-        res.redirect('/readPost?postNumber='+result.postNumber)
+        res.redirect('/readPost?postNumber=' + result.postNumber)
       }
     });
   }
@@ -58,7 +61,7 @@ router.get('/readPost', function (req, res) {
     if (err) {
       res.render(err);
     } else {
-      res.render('readPost', { data: result });
+      res.render('readPost', { data: result, moment: moment });
     }
   });
 });
@@ -118,11 +121,14 @@ router.post('/register', function (req, res) {
 });
 
 router.get('/login', function (req, res) {
-  res.render('login', { user: req.user });
+  req.session.backURL = req.header('Referer');
+  res.render('login');
 });
 
 router.post('/login', passport.authenticate('local'), function (req, res) {
-  res.redirect('/');
+  let backURL = req.session.backURL || '/';
+  delete req.session.backURL;
+  res.redirect(backURL);
 });
 
 router.get('/logout', function (req, res) {

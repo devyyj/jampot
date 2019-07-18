@@ -2,19 +2,19 @@ extends layout
 
 block content
   if (!user)
-    a(href="/login") Login
+    a(href="/login") 로그인
     br
-    a(href="/register") Register
+    a(href="/register") 회원가입
   if (user)
-    p You are currently logged in as #{user.username}
-    a(href="/logout") Logout
-  h1 post list
+    p 하이, #{user.username}
+    a(href="/logout") 로그아웃
+  h1 게시판
   table
     tr
-      th post number
-      th title
-      th user
-      th create time
+      th 글번호
+      th 제목
+      th 아이디
+      th 등록시간
     each val in data
       tr
         th #{val.postNumber}
@@ -22,6 +22,6 @@ block content
           - var url = "/readPost?postNumber=" + val.postNumber
           a(href=url) #{val.title}
         th #{val.user}
-        th #{val.createTime}
+        th #{moment(val.createTime).format("YYYY-MM-DD HH:mm:ss")}
   br
-  a(href="/createPost") create post
+  a(href="/createPost") 글쓰기
