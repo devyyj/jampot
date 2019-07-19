@@ -36,7 +36,7 @@ router.post('/createPost', function (req, res) {
         res.render(err)
       } else {
         console.log(result)
-        res.redirect('/')
+        res.redirect('/readPost?postNumber=' + req.query.postNumber)
       }
     })
   } else {
@@ -111,9 +111,8 @@ router.get('/register', function (req, res) {
 router.post('/register', function (req, res) {
   Account.register(new Account({ username: req.body.username }), req.body.password, function (err, account) {
     if (err) {
-      return res.render('register', { account: account })
+      return res.render('register', { err: err })
     }
-
     passport.authenticate('local')(req, res, function () {
       res.redirect('/')
     })
@@ -121,15 +120,30 @@ router.post('/register', function (req, res) {
 })
 
 router.get('/login', function (req, res) {
-  req.session.backURL = req.header('Referer')
-  res.render('login')
+  // req.session.backURL = req.header('Referer')
+  // res.render('login', { err: req.query.result })
+  res.render('/')
 })
 
-router.post('/login', passport.authenticate('local'), function (req, res) {
-  const backURL = req.session.backURL || '/'
-  delete req.session.backURL
-  res.redirect(backURL)
+router.post('/login', function (req, res, next) {
+  passport.authenticate('local', function (err, user, info) {
+    if (err) { return next(err) }
+    if (!user) { return res.redirect('/login?result=fail') }
+    req.logIn(user, function (err) {
+      if (err) { return next(err) }
+      // const backURL = req.session.backURL || '/'
+      // delete req.session.backURL
+      // return res.redirect(backURL)
+      return res.redirect('/')
+    })
+  })(req, res, next)
 })
+
+// router.post('/login', passport.authenticate('local'), function (req, res) {
+//   const backURL = req.session.backURL || '/'
+//   delete req.session.backURL
+//   res.redirect(backURL)
+// })
 
 router.get('/logout', function (req, res) {
   req.logout()
@@ -138,6 +152,30 @@ router.get('/logout', function (req, res) {
 
 router.get('/ping', function (req, res) {
   res.status(200).send('pong!')
+})
+
+router.post('/createComment', function (req, res) {
+  if (req.user === undefined) {
+    res.redirect('/login')
+  } else {
+    Board.findOne({ postNumber: req.query.postNumber }, function (err, result) {
+      if (err) {
+        res.send(err)
+      } else {
+        result.comments.push({
+          comment: req.body.comment,
+          user: req.user.username
+        })
+        result.save(function (err, result) {
+          if (err) {
+            res.send(err)
+          } else {
+            res.redirect(req.header('Referer'))
+          }
+        })
+      }
+    })
+  }
 })
 
 module.exports = router
