@@ -5,9 +5,9 @@ block content
     h1 회원가입
     br
     form(role='form', action="/register",method="post", style='max-width: 300px;')
-      input(type='text', name="username", placeholder='아이디')
+      input(type='text', name="username", placeholder='아이디' required)
       p
-      input(type='password', name="password", placeholder='비밀번호')
+      input(type='password', name="password", placeholder='비밀번호' required)
       p
       button(type='submit') 가입
       a(href='/')

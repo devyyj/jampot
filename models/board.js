@@ -1,17 +1,16 @@
-let express = require('express');
-let mongoose = require('mongoose');
-let mai = require('mongoose-auto-increment');
+const mongoose = require('mongoose')
+const mai = require('mongoose-auto-increment')
 
-mai.initialize(mongoose.connection);
+mai.initialize(mongoose.connection)
 
-let schema = new mongoose.Schema({
-    user: String,
-    title:String,
-    content:String,
-    createTime:{type: Date, default: Date.now},
-    updateTime:{type: Date, default: Date.now}
+const schema = new mongoose.Schema({
+  user: String,
+  title: String,
+  content: String,
+  createTime: { type: Date, default: Date.now },
+  updateTime: { type: Date, default: Date.now }
 })
 
-schema.plugin(mai.plugin, {model : 'board', field:'postNumber', startAt: 1} );
+schema.plugin(mai.plugin, { model: 'board', field: 'postNumber', startAt: 1 })
 
-module.exports = mongoose.model('board', schema);
+module.exports = mongoose.model('board', schema)
