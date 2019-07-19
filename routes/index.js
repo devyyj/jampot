@@ -120,9 +120,14 @@ router.post('/register', function (req, res) {
 })
 
 router.get('/login', function (req, res) {
-  // req.session.backURL = req.header('Referer')
-  // res.render('login', { err: req.query.result })
-  res.render('/')
+  const backURL = req.header('Referer')
+  if (backURL) {
+    const url = new URL(backURL)
+    if (url.pathname !== '/login') {
+      req.session.backURL = url
+    }
+  }
+  res.render('login', { err: req.query.result })
 })
 
 router.post('/login', function (req, res, next) {
@@ -131,19 +136,12 @@ router.post('/login', function (req, res, next) {
     if (!user) { return res.redirect('/login?result=fail') }
     req.logIn(user, function (err) {
       if (err) { return next(err) }
-      // const backURL = req.session.backURL || '/'
-      // delete req.session.backURL
-      // return res.redirect(backURL)
-      return res.redirect('/')
+      const backURL = req.session.backURL || '/'
+      delete req.session.backURL
+      return res.redirect(backURL)
     })
   })(req, res, next)
 })
-
-// router.post('/login', passport.authenticate('local'), function (req, res) {
-//   const backURL = req.session.backURL || '/'
-//   delete req.session.backURL
-//   res.redirect(backURL)
-// })
 
 router.get('/logout', function (req, res) {
   req.logout()
