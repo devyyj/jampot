@@ -1,11 +1,12 @@
 extends layout
 
 block content    
-    form(action="/createPost?postNumber=" + data.postNumber, method="post")
-        p 제목
-        input(type="text", name="title", value= data.title required)
-        p 내용
-        textarea(name="content", cols="30", rows="10" required)= data.content
-        br
-        input(type="submit", value="등록")
-        input(type="button", value="취소", onclick="location.href='javascript:history.back()'")
+  form(action="/createPost?postNumber=" + data.postNumber method="post")
+    div(class="form-group")
+      label 제목
+      input(type="text" name="title" value=data.title required class="form-control")
+      label 내용
+      textarea(name="content" cols="30" rows="10" required class="form-control")= data.content
+    input(type="submit" class="btn btn-primary" value="등록")
+    input(type="button" class="btn btn-danger" value="취소" style="float: right;"
+      onclick="location.href='javascript:history.back()'")

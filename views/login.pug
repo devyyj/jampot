@@ -1,15 +1,14 @@
 extends layout
 
 block content
-  .container
-    h1 로그인
-    if (err)
-      p 로그인 실패!
-    form(action="/login",method="post", style='max-width: 300px;')
-      input(type='text', name="username", placeholder='아이디' required)
-      p
-      input(type='password', name="password", placeholder='비밀번호' required)
-      p
-      button(type='submit') 로그인
-      a(href='/')
-        button(type="button") 취소
+  h1 로그인
+  if (err)
+    p 로그인 실패!
+  form(action="/login",method="post")
+    div(class="form-group")
+      input(type='text', name="username", placeholder='아이디' required class="form-control")
+    div(class="form-group")
+      input(type='password', name="password", placeholder='비밀번호' required class="form-control")
+    button(type='submit' class="btn btn-primary") 로그인
+    a(href='/')
+      button(type="button" class="btn btn-danger" style="float: right;") 취소

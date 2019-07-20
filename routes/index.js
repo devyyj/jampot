@@ -4,6 +4,7 @@ var router = express.Router()
 const Board = require('../models/board')
 var Account = require('../models/account')
 const moment = require('moment')
+const url = require('url')
 require('moment-timezone')
 moment.tz.setDefault('Asia/Seoul')
 
@@ -122,9 +123,9 @@ router.post('/register', function (req, res) {
 router.get('/login', function (req, res) {
   const backURL = req.header('Referer')
   if (backURL) {
-    const url = new URL(backURL)
-    if (url.pathname !== '/login') {
-      req.session.backURL = url
+    const parseURL = url.parse(backURL) 
+    if (parseURL.pathname !== '/login') {
+      req.session.backURL = parseURL.pathname
     }
   }
   res.render('login', { err: req.query.result })
