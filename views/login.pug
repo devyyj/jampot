@@ -6,7 +6,7 @@ block content
     p 로그인 실패!
   form(action="/login",method="post")
     div(class="form-group")
-      input(type='text', name="username", placeholder='아이디' required class="form-control")
+      input.text-lowercase(type='text', name="username", placeholder='아이디' required class="form-control")
     div(class="form-group")
       input(type='password', name="password", placeholder='비밀번호' required class="form-control")
     button(type='submit' class="btn btn-primary") 로그인
