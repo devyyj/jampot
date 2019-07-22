@@ -8,7 +8,10 @@ const url = require('url')
 require('moment-timezone')
 moment.tz.setDefault('Asia/Seoul')
 
-/* GET home page. */
+router.get('/test', function (req, res) {
+  res.render('test')
+})
+
 router.get('/', function (req, res, next) {
   Board.find().sort({ postNumber: -1 }).exec(function (err, result) {
     if (err) {
@@ -123,7 +126,7 @@ router.post('/register', function (req, res) {
 router.get('/login', function (req, res) {
   const backURL = req.header('Referer')
   if (backURL) {
-    const parseURL = url.parse(backURL) 
+    const parseURL = url.parse(backURL)
     if (parseURL.pathname !== '/login') {
       req.session.backURL = parseURL.pathname
     }

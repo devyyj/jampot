@@ -1,14 +1,13 @@
 extends layout
 
 block content
-  h1 로그인
-  if (err)
-    p 로그인 실패!
-  form(action="/login",method="post")
-    div(class="form-group")
-      input.text-lowercase(type='text', name="username", placeholder='아이디' required class="form-control")
-    div(class="form-group")
-      input(type='password', name="password", placeholder='비밀번호' required class="form-control")
-    button(type='submit' class="btn btn-primary") 로그인
-    a(href='/')
-      button(type="button" class="btn btn-danger" style="float: right;") 취소
+  .container.d-flex.align-items-center.justify-content-center(style="height:100%")
+    .text-center
+      h1 로그인
+      if (err)
+        p 로그인 실패!
+      form.form-signin(action="/login",method="post")
+        input.text-lowercase.form-control(type='text', name="username", placeholder='아이디' required autofocus)
+        input.form-control(type='password', name="password", placeholder='비밀번호' required)
+        button.btn.btn-outline-primary.btn-block(type='submit') 로그인
+        button.btn.btn-outline-danger.btn-block.mt-1(type="button" onclick="location.href='/'") 취소
