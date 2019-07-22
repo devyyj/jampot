@@ -1,19 +1,17 @@
 extends layout
 
 block content
-  h1 회원가입
-  if (err)
-    p= err.name
-    p= err.message
-  form(action="/register" method="post")
-    div(class="form-group")
-      input.text-lowercase(type='text' name="username" placeholder='아이디' class="form-control"
-        required pattern="[A-Za-z0-9]{4,10}" title="영어 소문자 또는 숫자. 최소 4자. 최대 10자.")
-    div(class="form-group")
-      input(type='password' name="password" placeholder='비밀번호' class="form-control"
-        required pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,20}$"
-        title="최소 하나 이상의 영문자, 숫자 그리고 특수문자. 최소 8자. 최대 20자.")
-    button(type='submit' class="btn btn-primary") 가입
-    =' '
-    a(href='/')
-      button(type="button" class="btn btn-danger" ) 취소
+  .row.h-100
+    .m-auto.text-center
+      h1 회원가입
+      if (err)
+        p= err.name
+        p= err.message
+      form.form-signin(action="/register" method="post")
+        input.form-control.text-lowercase(type='text' name="username" placeholder='아이디'
+          required pattern="[A-Za-z0-9]{4,10}" title="영어 소문자 또는 숫자. 최소 4자. 최대 10자.")
+        input.form-control(type='password' name="password" placeholder='비밀번호'
+          required pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,20}$"
+          title="최소 하나 이상의 영문자, 숫자 그리고 특수문자. 최소 8자. 최대 20자.")
+        button.btn.btn-outline-primary.btn-block(type='submit') 로그인
+        button.btn.btn-outline-danger.btn-block.mt-1(type="button" onclick="location.href='/'") 취소

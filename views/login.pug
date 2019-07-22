@@ -1,8 +1,8 @@
 extends layout
 
 block content
-  .container.d-flex.align-items-center.justify-content-center(style="height:100%")
-    .text-center
+  .row.h-100
+    .m-auto.text-center
       h1 로그인
       if (err)
         p 로그인 실패!
@@ -11,3 +11,5 @@ block content
         input.form-control(type='password', name="password", placeholder='비밀번호' required)
         button.btn.btn-outline-primary.btn-block(type='submit') 로그인
         button.btn.btn-outline-danger.btn-block.mt-1(type="button" onclick="location.href='/'") 취소
+
+        
