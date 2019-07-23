@@ -24,4 +24,21 @@ block content
             a(href=url) #{val.title}
           td #{val.user}
           td.d-none.d-sm-block #{moment(val.createTime).format("YYYY-MM-DD HH:mm:ss")}
+
+  nav(aria-label="Page navigation example")
+    ul.pagination.pagination-sm.justify-content-center
+      - var pageNumber = pagination.startPageNumber
+      - var i = 0
+      li.page-item
+        - var previousPage = pagination.startPageNumber - pagination.totalPage
+        a.page-link(href="/?page="+previousPage+"&startPageNumber="+previousPage aria-label="Previous")
+          span(aria-hidden="true") &laquo;
+      while i++ < pagination.totalPage
+        li.page-item
+          a.page-link(href="/?page="+pageNumber+"&startPageNumber="+pagination.startPageNumber) #{++pageNumber}
+      li.page-item
+        - var nextPage = pagination.startPageNumber + pagination.totalPage
+        a.page-link(href="/?page="+pageNumber+"&startPageNumber="+nextPage aria-label="Next")
+          span(aria-hidden="true") &raquo;
+
   a(href="/createPost") 글쓰기
