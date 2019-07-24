@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const mai = require('mongoose-auto-increment')
+const mongoosePaginate = require('mongoose-paginate-v2')
 
 mai.initialize(mongoose.connection)
 
@@ -17,5 +18,6 @@ const schema = new mongoose.Schema({
 })
 
 schema.plugin(mai.plugin, { model: 'board', field: 'postNumber', startAt: 1 })
+schema.plugin(mongoosePaginate)
 
 module.exports = mongoose.model('board', schema)

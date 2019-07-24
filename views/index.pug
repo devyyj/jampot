@@ -11,34 +11,39 @@ block content
   table(class='table table-hover table-sm')
     thead
       tr
-        th.d-none.d-sm-block(scope='col') 글번호
-        th(scope='col') 제목
-        th(scope='col') 아이디
-        th.d-none.d-sm-block(scope='col') 등록시간
+        th(scope='col') No
+        th(scope='col') Title
+        th(scope='col') ID
+        //- th(scope='col') Time
     tbody
-      each val in data
+      each val in data.docs
         tr
-          th.d-none.d-sm-block(scope='row') #{val.postNumber}
-          td
+          th(scope='row') #{val.postNumber}
+          td(style="word-break: break-all;")
             - var url = "/readPost?postNumber=" + val.postNumber
             a(href=url) #{val.title}
           td #{val.user}
-          td.d-none.d-sm-block #{moment(val.createTime).format("YYYY-MM-DD HH:mm:ss")}
+          //- td #{moment(val.createTime).format("YYYY-MM-DD HH:mm:ss")}
 
   nav(aria-label="Page navigation example")
-    ul.pagination.pagination-sm.justify-content-center
-      - var pageNumber = pagination.startPageNumber
-      - var i = 0
-      li.page-item
-        - var previousPage = pagination.startPageNumber - pagination.totalPage
-        a.page-link(href="/?page="+previousPage+"&startPageNumber="+previousPage aria-label="Previous")
-          span(aria-hidden="true") &laquo;
-      while i++ < pagination.totalPage
+    ul.pagination.justify-content-center
+      if data.hasPrevPage
         li.page-item
-          a.page-link(href="/?page="+pageNumber+"&startPageNumber="+pagination.startPageNumber) #{++pageNumber}
+          a.page-link(href="/?page="+data.prevPage aria-label="Previous")
+            span(aria-hidden="true") &laquo;
+      else
+        li.page-item.disabled
+          a.page-link(href="/?page="+data.prevPage aria-label="Previous")
+            span(aria-hidden="true") &laquo;
       li.page-item
-        - var nextPage = pagination.startPageNumber + pagination.totalPage
-        a.page-link(href="/?page="+pageNumber+"&startPageNumber="+nextPage aria-label="Next")
-          span(aria-hidden="true") &raquo;
+        a.page-link #{data.page} / #{data.totalPages}
+      if data.hasNextPage
+        li.page-item
+        a.page-link(href="/?page="+data.nextPage aria-label="Next")
+          span(aria-hidden="true") &raquo;  
+      else
+        li.page-item.disabled
+          a.page-link(href="/?page="+data.nextPage aria-label="Next")
+            span(aria-hidden="true") &raquo;
 
   a(href="/createPost") 글쓰기

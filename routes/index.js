@@ -13,35 +13,17 @@ router.get('/test', function (req, res) {
 })
 
 router.get('/', async function (req, res, next) {
-  const perPage = 2
-  const maxPage = 3
-  const page = Number(req.query.page) || 0
-  const startPageNumber = Number(req.query.startPageNumber) || 0
-  let totalPost
-  console.log(perPage * startPageNumber)
-  await Board.find().skip(perPage * startPageNumber).count(function (err, count) {
+  const opt = {
+    sort: { postNumber: -1 },
+    page: Number(req.query.page) || 1,
+    limit: 10
+  }
+
+  Board.paginate({}, opt, function (err, result) {
     if (err) {
       console.log(err)
     } else {
-      totalPost = count
-    }
-  })
-
-  await Board.find().sort({ postNumber: -1 }).limit(perPage).skip(perPage * page).exec(function (err, result) {
-    if (err) {
-      res.render(err)
-    } else {
-      let totalPage = totalPost / perPage
-      if (totalPage > maxPage) { totalPage = maxPage }
-
-      const pagination = {
-        pageNumber: page,
-        startPageNumber: startPageNumber,
-        totalPage: totalPage,
-        maxPage: maxPage
-      }
-      console.log(pagination)
-      res.render('index', { data: result, user: req.user, moment: moment, pagination: pagination })
+      res.render('index', { data: result, user: req.user, moment: moment })
     }
   })
 })
