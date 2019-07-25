@@ -77,7 +77,7 @@ router.get('/readPost', function (req, res) {
         if (err) {
           console.log(err)
         } else {
-          res.render('readPost', { data: result, moment: moment })
+          res.render('readPost', { data: result, moment: moment, user: req.user })
         }
       })
     }
@@ -122,13 +122,14 @@ router.get('/deletePost', function (req, res) {
 })
 
 router.get('/likePost', function (req, res) {
-  Board.updateOne({ postNumber: req.query.postNumber },
-    { $inc: { like: 1 } },
-    function (err, result) {
-      if (err) console.log(err)
-      else res.sendStatus(200)
-    }
-  )
+  res.redirect('/login')
+  // Board.updateOne({ postNumber: req.query.postNumber },
+  //   { $inc: { like: 1 } },
+  //   function (err, result) {
+  //     if (err) console.log(err)
+  //     else res.sendStatus(200)
+  //   }
+  // )
 })
 
 router.get('/disLikePost', function (req, res) {

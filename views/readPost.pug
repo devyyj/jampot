@@ -28,7 +28,7 @@ block content
   button(type="button" class="btn btn-primary"
     onclick="location.href='/'") 목록
   = ' '
-  button(type="button" class="btn btn-primary" value=data.postNumber
+  button(type="button" class="btn btn-primary" postNumber=data.postNumber user=user
     onclick="likePost(event)") 추천
   = ' '
   button(type="button" class="btn btn-primary" value=data.postNumber
@@ -36,12 +36,11 @@ block content
   
   script.
     var xhttp = new XMLHttpRequest();    
-    function likePost(e) {
-      xhttp.open("GET", "/likePost?postNumber=" + e.target.value, false);
+    function likePost(e) {      
+      if (e.target.user === undefined) window.location.href = '/login';
+      xhttp.open("GET", "/likePost?postNumber=" + e.target.postNumber, true);
       xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
       xhttp.send();
-      console.log( xhttp.status)
-      console.log( xhttp.responseURL)
     }
     function disLikePost(e) {
       xhttp.open("GET", "/disLikePost?postNumber=" + e.target.value, true);
