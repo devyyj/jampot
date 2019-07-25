@@ -8,6 +8,10 @@ const schema = new mongoose.Schema({
   user: String,
   title: String,
   content: String,
+  hits: { type: Number, default: 0 },
+  like: { type: Number, default: 0 },
+  disLike: { type: Number, default: 0 },
+  voteList: [{ user: String }],
   comments: [{
     comment: String,
     user: String,

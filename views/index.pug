@@ -8,25 +8,27 @@ block content
   if (user)
     p 하이, #{user.username}
     a(href="/logout") 로그아웃
-  table(class='table table-hover table-sm')
-    thead
-      tr
-        th(scope='col') No
-        th(scope='col') Title
-        th(scope='col') ID
-        //- th(scope='col') Time
+
+  table.table.table-hover.table-sm(style='font-size: 12px')
     tbody
       each val in data.docs
         tr
-          th(scope='row') #{val.postNumber}
-          td(style="word-break: break-all;")
+          th.align-middle.text-center(style="width: 59px") #{val.postNumber}
+          td
             - var url = "/readPost?postNumber=" + val.postNumber
-            a(href=url) #{val.title}
-          td #{val.user}
-          //- td #{moment(val.createTime).format("YYYY-MM-DD HH:mm:ss")}
+              a(href=url style='font-size: 14px') #{val.title}
+            .row
+              .col-auto
+                |작성자 : #{val.user}
+                br
+                |작성시간 : #{moment(val.createTime).fromNow()}
+              .col-auto
+                |추천/반대 : #{val.like}/#{val.disLike}
+                br
+                |조회수 : #{val.hits}
 
   nav(aria-label="Page navigation example")
-    ul.pagination.justify-content-center
+    ul.pagination.pagination-sm.justify-content-center
       if data.hasPrevPage
         li.page-item
           a.page-link(href="/?page="+data.prevPage aria-label="Previous")

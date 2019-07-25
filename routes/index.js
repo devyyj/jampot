@@ -7,6 +7,7 @@ const moment = require('moment')
 const url = require('url')
 require('moment-timezone')
 moment.tz.setDefault('Asia/Seoul')
+moment.locale('ko')
 
 router.get('/test', function (req, res) {
   res.render('test')
@@ -71,7 +72,14 @@ router.get('/readPost', function (req, res) {
     if (err) {
       res.render(err)
     } else {
-      res.render('readPost', { data: result, moment: moment })
+      result.hits++
+      result.save(function (err, result) {
+        if (err) {
+          console.log(err)
+        } else {
+          res.render('readPost', { data: result, moment: moment })
+        }
+      })
     }
   })
 })
@@ -113,6 +121,34 @@ router.get('/deletePost', function (req, res) {
   }
 })
 
+router.get('/likePost', function (req, res) {
+  if (req.user === undefined) {
+    res.redirect('/login')
+  } else {
+    Board.updateOne({ postNumber: req.query.postNumber },
+      { $inc: { like: 1 } },
+      function (err, result) {
+        if (err) console.log(err)
+        else res.sendStatus(200)
+      }
+    )
+  }
+})
+
+router.get('/disLikePost', function (req, res) {
+  if (req.user === undefined) {
+    res.redirect('/login')
+  } else {
+    Board.updateOne({ postNumber: req.query.postNumber },
+      { $inc: { disLike: 1 } },
+      function (err, result) {
+        if (err) console.log(err)
+        else res.sendStatus(200)
+      }
+    )
+  }
+})
+
 // passport
 router.get('/register', function (req, res) {
   res.render('register', {})
@@ -132,7 +168,7 @@ router.post('/register', function (req, res) {
 router.get('/login', function (req, res) {
   const backURL = req.header('Referer')
   if (backURL) {
-    const parseURL = url.parse(backURL)
+    const parseURL = new url.URL(backURL)
     if (parseURL.pathname !== '/login') {
       req.session.backURL = parseURL.pathname
     }
