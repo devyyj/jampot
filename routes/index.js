@@ -122,31 +122,23 @@ router.get('/deletePost', function (req, res) {
 })
 
 router.get('/likePost', function (req, res) {
-  if (req.user === undefined) {
-    res.redirect('/login')
-  } else {
-    Board.updateOne({ postNumber: req.query.postNumber },
-      { $inc: { like: 1 } },
-      function (err, result) {
-        if (err) console.log(err)
-        else res.sendStatus(200)
-      }
-    )
-  }
+  Board.updateOne({ postNumber: req.query.postNumber },
+    { $inc: { like: 1 } },
+    function (err, result) {
+      if (err) console.log(err)
+      else res.sendStatus(200)
+    }
+  )
 })
 
 router.get('/disLikePost', function (req, res) {
-  if (req.user === undefined) {
-    res.redirect('/login')
-  } else {
-    Board.updateOne({ postNumber: req.query.postNumber },
-      { $inc: { disLike: 1 } },
-      function (err, result) {
-        if (err) console.log(err)
-        else res.sendStatus(200)
-      }
-    )
-  }
+  Board.updateOne({ postNumber: req.query.postNumber },
+    { $inc: { disLike: 1 } },
+    function (err, result) {
+      if (err) console.log(err)
+      else res.sendStatus(200)
+    }
+  )
 })
 
 // passport
