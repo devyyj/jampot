@@ -25,22 +25,27 @@ block content
                 =' '
                 |#{val.user}
                 =' '
+              .col-auto
                 i.far.fa-clock
                 =' ' 
                 |#{moment(val.createTime).fromNow()}
+            .row
               .col-auto
                 i.far.fa-thumbs-up
                 =' '
                 span.text-primary #{val.like} 
                 =' '
+              .col-auto
                 i.far.fa-thumbs-down 
                 =' '
                 span.text-danger #{val.disLike}
                 =' '
+              .col-auto
                 i.far.fa-eye
                 =' '
                 |#{val.hits}
                 =' '
+              .col-auto
                 i.far.fa-comment
                 =' '
                 |#{val.comments.length}

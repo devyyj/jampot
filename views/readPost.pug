@@ -11,6 +11,7 @@ block content
       =' '
       |#{data.user}
       =' '
+    .col-auto
       i.far.fa-clock
       =' ' 
       |#{moment(data.createTime).format("YYYY-MM-DD HH:mm:ss")}
@@ -19,19 +20,22 @@ block content
       =' '
       span.text-primary #{data.like} 
       =' '
+    .col-auto
       i.far.fa-thumbs-down 
       =' '
       span.text-danger #{data.disLike}
       =' '
+    .col-auto
       i.far.fa-eye
       =' '
       |#{data.hits}
       =' '
+    .col-auto
       i.far.fa-comment
       =' '
       |#{data.comments.length}
   hr
-  .col-auto
+  .col-auto(style="white-space: pre-wrap;")
     =data.content
   hr  
   each val in data.comments
