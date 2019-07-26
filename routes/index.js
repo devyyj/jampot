@@ -117,9 +117,8 @@ router.get('/deletePost', function (req, res) {
 
 router.get('/likePost', async function (req, res) {
   let inc
-  if (req.query.disLike) inc = { disLike: 1 }
+  if (req.query.disLike === 'true') inc = { disLike: 1 }
   else inc = { like: 1 }
-
   await Board.updateOne({ postNumber: req.query.postNumber },
     { $inc: inc, $push: { voteList: { user: req.user.username } } })
   res.sendStatus(200)
