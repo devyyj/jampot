@@ -28,22 +28,7 @@ block content
   button(type="button" class="btn btn-primary"
     onclick="location.href='/'") 목록
   = ' '
-  button(type="button" class="btn btn-primary" postNumber=data.postNumber user=user
-    onclick="likePost(event)") 추천
-  = ' '
-  button(type="button" class="btn btn-primary" value=data.postNumber
-    onclick="disLikePost(event)") 반대
-  
-  script.
-    var xhttp = new XMLHttpRequest();    
-    function likePost(e) {      
-      if (e.target.user === undefined) window.location.href = '/login';
-      xhttp.open("GET", "/likePost?postNumber=" + e.target.postNumber, true);
-      xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-      xhttp.send();
-    }
-    function disLikePost(e) {
-      xhttp.open("GET", "/disLikePost?postNumber=" + e.target.value, true);
-      xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-      xhttp.send();
-    }
+  button.btn.btn-primary(id='like' type="button"
+    data-postNumber=data.postNumber data-user=user data-vote=vote) 추천
+  =' '
+  button.btn.btn-primary(id='disLike' type="button" data-postnumber=data.postNumber data-user=user data-vote=vote) 반대

@@ -67,21 +67,15 @@ router.post('/createPost', function (req, res) {
   }
 })
 
-router.get('/readPost', function (req, res) {
-  Board.findOne({ postNumber: req.query.postNumber }, function (err, result) {
-    if (err) {
-      res.render(err)
-    } else {
-      result.hits++
-      result.save(function (err, result) {
-        if (err) {
-          console.log(err)
-        } else {
-          res.render('readPost', { data: result, moment: moment, user: req.user })
-        }
-      })
-    }
-  })
+router.get('/readPost', async function (req, res) {
+  await Board.updateOne({ postNumber: req.query.postNumber }, { $inc: { hits: 1 } })
+  let vote
+  const result = await Board.findOne({ postNumber: req.query.postNumber })
+  if (req.user !== undefined) {
+    const voteResult = await Board.findOne({ postNumber: req.query.postNumber, 'voteList.user': req.user.username })
+    if (voteResult) vote = 'true'
+  }
+  res.render('readPost', { data: result, moment: moment, user: req.user, vote: vote })
 })
 
 router.get('/updatePost', function (req, res) {
@@ -121,25 +115,14 @@ router.get('/deletePost', function (req, res) {
   }
 })
 
-router.get('/likePost', function (req, res) {
-  res.redirect('/login')
-  // Board.updateOne({ postNumber: req.query.postNumber },
-  //   { $inc: { like: 1 } },
-  //   function (err, result) {
-  //     if (err) console.log(err)
-  //     else res.sendStatus(200)
-  //   }
-  // )
-})
+router.get('/likePost', async function (req, res) {
+  let inc
+  if (req.query.disLike) inc = { disLike: 1 }
+  else inc = { like: 1 }
 
-router.get('/disLikePost', function (req, res) {
-  Board.updateOne({ postNumber: req.query.postNumber },
-    { $inc: { disLike: 1 } },
-    function (err, result) {
-      if (err) console.log(err)
-      else res.sendStatus(200)
-    }
-  )
+  await Board.updateOne({ postNumber: req.query.postNumber },
+    { $inc: inc, $push: { voteList: { user: req.user.username } } })
+  res.sendStatus(200)
 })
 
 // passport
@@ -163,7 +146,7 @@ router.get('/login', function (req, res) {
   if (backURL) {
     const parseURL = new url.URL(backURL)
     if (parseURL.pathname !== '/login') {
-      req.session.backURL = parseURL.pathname
+      req.session.backURL = parseURL.href
     }
   }
   res.render('login', { err: req.query.result })

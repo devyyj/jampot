@@ -6,9 +6,11 @@ block content
     br
     a(href="/register") 회원가입
   if (user)
-    p 하이, #{user.username}
+    p 방문해주셔서 고맙읍니다, 
+      kbd #{user.username}
+      |님
     a(href="/logout") 로그아웃
-
+  
   table.table.table-hover.table-sm(style='font-size: 12px')
     tbody
       each val in data.docs
@@ -19,13 +21,26 @@ block content
               a(href=url style='font-size: 14px') #{val.title}
             .row
               .col-auto
-                |작성자 : #{val.user}
+                i.fas.fa-user-edit
+                =' '
+                span.badge.badge-pill.badge-dark #{val.user}
                 br
-                |작성시간 : #{moment(val.createTime).fromNow()}
+                i.far.fa-clock
+                =' ' 
+                |#{moment(val.createTime).fromNow()}
+                =' '
               .col-auto
-                |추천/반대 : #{val.like}/#{val.disLike}
+                i.far.fa-thumbs-up
+                =' '
+                span.badge.badge-pill.badge-primary #{val.like} 
+                =' '
+                i.far.fa-thumbs-down 
+                =' '
+                span.badge.badge-pill.badge-danger #{val.disLike}
                 br
-                |조회수 : #{val.hits}
+                i.far.fa-eye
+                =' '
+                |#{val.hits}
 
   nav(aria-label="Page navigation example")
     ul.pagination.pagination-sm.justify-content-center
