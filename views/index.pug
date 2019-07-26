@@ -18,26 +18,25 @@ block content
           th.align-middle.text-center(style="width: 59px") #{val.postNumber}
           td
             - var url = "/readPost?postNumber=" + val.postNumber
-              a(href=url style='font-size: 14px') #{val.title}
+              a(href=url style='font-size: 16px') #{val.title}
             .row
               .col-auto
                 i.fas.fa-user-edit
                 =' '
-                span.badge.badge-pill.badge-dark #{val.user}
-                br
+                |#{val.user}
+              .col-auto
                 i.far.fa-clock
                 =' ' 
                 |#{moment(val.createTime).fromNow()}
-                =' '
               .col-auto
                 i.far.fa-thumbs-up
                 =' '
-                span.badge.badge-pill.badge-primary #{val.like} 
+                span.text-primary #{val.like} 
                 =' '
                 i.far.fa-thumbs-down 
                 =' '
-                span.badge.badge-pill.badge-danger #{val.disLike}
-                br
+                span.text-danger #{val.disLike}
+                =' '
                 i.far.fa-eye
                 =' '
                 |#{val.hits}
