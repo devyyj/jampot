@@ -24,7 +24,7 @@ block content
                 i.fas.fa-user-edit
                 =' '
                 |#{val.user}
-              .col-auto
+                =' '
                 i.far.fa-clock
                 =' ' 
                 |#{moment(val.createTime).fromNow()}
@@ -40,6 +40,10 @@ block content
                 i.far.fa-eye
                 =' '
                 |#{val.hits}
+                =' '
+                i.far.fa-comment
+                =' '
+                |#{val.comments.length}
 
   nav(aria-label="Page navigation example")
     ul.pagination.pagination-sm.justify-content-center
