@@ -1,34 +1,70 @@
 extends layout
 
 block content
-  .col.m-1 제목 : 
-      =data.title
-  .col.m-1 작성자 : 
-      =data.user
-  .col.m-1 작성시간 : 
-    =moment(data.createTime).format("YYYY-MM-DD HH:mm:ss")
-  .col.bg-success.text-white.m-1 본문
-  .col.m-1=data.content
-  .col.bg-info.text-white.m-1 댓글
+  hr
+  .col-auto
+    strong #{data.title}
+  hr
+  .row.col
+    .col-auto
+      i.fas.fa-user-edit
+      =' '
+      |#{data.user}
+      =' '
+      i.far.fa-clock
+      =' ' 
+      |#{moment(data.createTime).format("YYYY-MM-DD HH:mm:ss")}
+    .col-auto
+      i.far.fa-thumbs-up
+      =' '
+      span.text-primary #{data.like} 
+      =' '
+      i.far.fa-thumbs-down 
+      =' '
+      span.text-danger #{data.disLike}
+      =' '
+      i.far.fa-eye
+      =' '
+      |#{data.hits}
+      =' '
+      i.far.fa-comment
+      =' '
+      |#{data.comments.length}
+  hr
+  .col-auto
+    =data.content
+  hr  
   each val in data.comments
     - var time = moment(val.createTime).format("YYYY-MM-DD HH:mm:ss")
-    .col.m-1= val.comment + ' - ' + val.user + ' (' + time + ')'
-
-  form(action="/createComment?postNumber=" + data.postNumber method="post")
-    div.form-group.form-inline
-      input.form-control(type="text" name="comment" required)
-      button.btn.btn-primary.m-1(type="submit" class="") 댓글등록
+    div
+      .col-auto.bg-light
+        i.fas.fa-user-edit
+        =' '
+        =val.user
+        =' '
+        i.far.fa-clock
+        =' ' 
+        =time
+      .col-auto
+        =val.comment
   hr
-  button(type="button" class="btn btn-warning" 
-    onclick="location.href='/updatePost?postNumber=" + data.postNumber + "'") 수정
-  = ' '
-  button(type="button" class="btn btn-danger"
-    onclick="location.href='/deletePost?postNumber=" + data.postNumber + "'") 삭제
-  = ' '
-  button(type="button" class="btn btn-primary"
-    onclick="location.href='/'") 목록
-  = ' '
-  button.btn.btn-primary(id='like' type="button"
-    data-postNumber=data.postNumber data-user=user data-vote=vote) 추천
+  form(action="/createComment?postNumber=" + data.postNumber method="post")
+    .input-group
+      .input-group-prepend
+        .input-group-text
+          i.far.fa-comment
+      input.form-control(type="text" name="comment" required)
+  hr
+  button.btn.btn-sm.btn-primary(id='like' type="button" data-postNumber=data.postNumber data-user=user data-vote=vote)
+    div
+      i.far.fa-thumbs-up
   =' '
-  button.btn.btn-primary(id='disLike' type="button" data-postnumber=data.postNumber data-user=user data-vote=vote) 반대
+  button.btn.btn-sm.btn-danger(id='disLike' type="button" data-postnumber=data.postNumber data-user=user data-vote=vote)
+    div
+      i.far.fa-thumbs-down 
+  = ' '
+  button.btn-sm.btn.btn-primary(type="button" onclick="location.href='/'") 목록
+  = ' '
+  button.btn.btn-warning.btn-sm(type="button" onclick="location.href='/updatePost?postNumber=" + data.postNumber + "'") 수정
+  = ' '
+  button.btn.btn-danger.btn-sm(type="button" onclick="location.href='/deletePost?postNumber=" + data.postNumber + "'") 삭제

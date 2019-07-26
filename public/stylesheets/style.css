@@ -1,5 +1,6 @@
 html, body, .container {
   height: 100%;
+  word-break: break-all;
 }
 .form-signin {
   width: 100%;
