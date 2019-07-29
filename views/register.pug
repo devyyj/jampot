@@ -1,25 +1,26 @@
 extends layout
 
 block content
-  form.m-auto(action="/register" method="post")
+  form.mt-5(action="/register" method="post")
     .form-group.row
       label.col-sm-2.col-form-label.text-lowercase 아이디
       .col
-        input.form-control(placeholder="아이디 입력" name='ID' required pattern="[A-Za-z0-9]{4,10}")
+        input.form-control(placeholder="아이디 입력" name='username' required autofocus pattern="[A-Za-z0-9]{4,10}")
         small.form-text.text-muted 영문자 또는 숫자. (길이 4 ~ 10)
     .form-group.row
       label.col-sm-2.col-form-label Password
       .col
-        input.form-control(type="password" placeholder="비밀번호 입력" name="PW"
+        input.form-control(type="password" placeholder="비밀번호 입력" name="password" id='pw1' onchange='sameCheck()'
           required pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,20}$")
-        input.mt-1.form-control(type="password" placeholder="비밀번호 확인" name="PW2"
+        input.mt-1.form-control(type="password" placeholder="비밀번호 확인" name="password2" id='pw2' onchange='sameCheck()'
           required pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,20}$")
         small.form-text.text-muted 최소 하나 이상의 영문자, 숫자, 특수문자. (길이 8 ~ 20)
-    .form-group.row
-      .col
-        button.btn.btn-outline-primary.btn-block(type='submit') 로그인
-        button.btn.btn-outline-danger.btn-block.mt-1(type="button" onclick="location.href='/'") 취소
-  
+        br
+        button.btn.btn-outline-primary(type='submit') 회원가입
+        =" "
+        button.btn.btn-outline-danger(type='button' onclick="location.href='/'") 취소
+  if (err)
+    p.text-danger #{err}
     //- .form-group.row.justify-content-sm-center
     //-   button.col-sm-6.btn.btn-outline-primary(type='submit') 회원가입
     //-   =' '   
