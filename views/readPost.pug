@@ -18,12 +18,12 @@ block content
     .col-auto
       i.far.fa-thumbs-up
       =' '
-      span.text-primary #{data.like} 
+      span.text-danger #{data.like} 
       =' '
     .col-auto
       i.far.fa-thumbs-down 
       =' '
-      span.text-danger #{data.disLike}
+      span.text-primary #{data.disLike}
       =' '
     .col-auto
       i.far.fa-eye
@@ -59,15 +59,17 @@ block content
           i.far.fa-comment
       input.form-control(type="text" name="comment" required)
   hr
-  button.btn.btn-sm.btn-primary(id='like' type="button" data-postNumber=data.postNumber data-user=user data-vote=vote)
+  button.btn.btn-sm.btn-danger(id='like' type="button" onclick="likePost()"
+    data-postNumber=data.postNumber data-user=user)
     div
       i.far.fa-thumbs-up
   =' '
-  button.btn.btn-sm.btn-danger(id='disLike' type="button" data-postnumber=data.postNumber data-user=user data-vote=vote)
+  button.btn.btn-sm.btn-primary(id='disLike' type="button" onclick="likePost(true)"
+    data-postnumber=data.postNumber data-user=user)
     div
       i.far.fa-thumbs-down 
   = ' '
-  button.btn-sm.btn.btn-primary(type="button" onclick="location.href='/'") 목록
+  button.btn-sm.btn.btn-secondary(type="button" onclick="location.href='/'") 목록
   = ' '
   button.btn.btn-warning.btn-sm(type="button" onclick="location.href='/updatePost?postNumber=" + data.postNumber + "'") 수정
   = ' '

@@ -69,13 +69,13 @@ router.post('/createPost', function (req, res) {
 
 router.get('/readPost', async function (req, res) {
   await Board.updateOne({ postNumber: req.query.postNumber }, { $inc: { hits: 1 } })
-  let vote
   const result = await Board.findOne({ postNumber: req.query.postNumber })
-  if (req.user !== undefined) {
-    const voteResult = await Board.findOne({ postNumber: req.query.postNumber, 'voteList.user': req.user.username })
-    if (voteResult) vote = 'true'
-  }
-  res.render('readPost', { data: result, moment: moment, user: req.user, vote: vote })
+  // let vote
+  // if (req.user !== undefined) {
+  //   const voteResult = await Board.findOne({ postNumber: req.query.postNumber, 'voteList.user': req.user.username })
+  //   if (voteResult) vote = 'true'
+  // }
+  res.render('readPost', { data: result, moment: moment, user: req.user })
 })
 
 router.get('/updatePost', function (req, res) {
@@ -116,12 +116,27 @@ router.get('/deletePost', function (req, res) {
 })
 
 router.get('/likePost', async function (req, res) {
-  let inc
-  if (req.query.disLike === 'true') inc = { disLike: 1 }
-  else inc = { like: 1 }
-  await Board.updateOne({ postNumber: req.query.postNumber },
-    { $inc: inc, $push: { voteList: { user: req.user.username } } })
-  res.sendStatus(200)
+  if (req.user !== undefined) {
+    let msg
+    const voteResult = await Board.findOne({
+      postNumber: req.query.postNumber,
+      'voteList.user': req.user.username
+    })
+    if (voteResult) msg = '이미 "추천/반대" 하셨읍니다.'
+    else {
+      let inc
+      if (req.query.disLike === 'true') {
+        msg = '"반대" 하셨읍니다.'
+        inc = { disLike: 1 }
+      } else {
+        msg = '"추천" 하셨읍니다.'
+        inc = { like: 1 }
+      }
+      await Board.updateOne({ postNumber: req.query.postNumber },
+        { $inc: inc, $push: { voteList: { user: req.user.username } } })
+    }
+    res.send(msg)
+  }
 })
 
 // passport
