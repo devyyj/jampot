@@ -11,11 +11,11 @@ block content
       label.col-sm-2.col-form-label Password
       .col
         input.form-control(type="password" placeholder="비밀번호 입력" name="password" id='pw1'
-          required pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,20}$")
+          required pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,40}$")
         input.mt-1.form-control(type="password" placeholder="비밀번호 확인" name="password2" id='pw2'
-          required pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,20}$")
+          required pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,40}$")
         .invalid-feedback(id='feedback')
-        small.form-text.text-muted 최소 하나 이상의 영문자, 숫자, 특수문자. (길이 8 ~ 20)
+        small.form-text.text-muted 최소 하나 이상의 영문자, 숫자, 특수문자. (길이 8 ~ 40)
         br
         button.btn.btn-outline-primary(type='submit') 회원가입
         =" "
