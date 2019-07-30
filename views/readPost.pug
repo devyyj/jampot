@@ -60,12 +60,12 @@ block content
       input.form-control(type="text" name="comment" required)
   hr
   button.btn.btn-sm.btn-danger(id='like' type="button" onclick="likePost()"
-    data-postNumber=data.postNumber data-user=user)
+    value=data.postNumber data-user=user)
     div
       i.far.fa-thumbs-up
   =' '
   button.btn.btn-sm.btn-primary(id='disLike' type="button" onclick="likePost(true)"
-    data-postnumber=data.postNumber data-user=user)
+    value=data.postNumber data-user=user)
     div
       i.far.fa-thumbs-down 
   = ' '
@@ -74,3 +74,5 @@ block content
   button.btn.btn-warning.btn-sm(type="button" onclick="location.href='/updatePost?postNumber=" + data.postNumber + "'") 수정
   = ' '
   button.btn.btn-danger.btn-sm(type="button" onclick="location.href='/deletePost?postNumber=" + data.postNumber + "'") 삭제
+
+  script(src="javascripts/readPost.js")
