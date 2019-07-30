@@ -65,6 +65,8 @@ block content
         .input-group-text
           i.far.fa-comment
       input.form-control(type="text" name="comment" required)
+      .input-group-append
+        button.btn.btn-outline-secondary(type="submit") 등록
   hr
   //- 추천 버튼
   button.btn.btn-sm.btn-danger(id='like' type="button" onclick="likePost()"
@@ -101,5 +103,5 @@ block content
             .modal-footer
               button.btn.btn-secondary(type="button" data-dismiss="modal") 취소
               button.btn.btn-danger(type="button" onclick="location.href='/deletePost?postNumber=" + data.postNumber + "'") 삭제  
-  
+  hr
   include askLogin.pug
