@@ -9,8 +9,10 @@ window.addEventListener('load', function () {
       if (form.checkValidity() === false || isSame() === false) {
         event.preventDefault()
         event.stopPropagation()
-        if (isSame() === false) document.getElementById('feedback').innerHTML = '비밀번호가 일치하지 않읍니다.'
-        else document.getElementById('feedback').innerHTML = ''
+        if (isSame() === false) {
+          document.getElementById('feedback').innerHTML = '비밀번호가 일치하지 않읍니다.'
+          document.getElementById('pw2').classList.add('is-invalid')
+        } else document.getElementById('feedback').innerHTML = ''
       }
       form.classList.add('was-validated')
     }, false)

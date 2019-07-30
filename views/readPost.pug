@@ -2,54 +2,61 @@ extends layout
 
 block content
   hr
-  .col-auto
-    strong #{data.title}
+  strong #{data.title}
   hr
-  .row.col
-    .col-auto
-      i.fas.fa-user-edit
-      =' '
-      |#{data.user}
-      =' '
-    .col-auto
-      i.far.fa-clock
-      =' ' 
-      |#{moment(data.createTime).format("YYYY-MM-DD HH:mm:ss")}
-    .col-auto
-      i.far.fa-thumbs-up
-      =' '
-      span.text-danger #{data.like} 
-      =' '
-    .col-auto
-      i.far.fa-thumbs-down 
-      =' '
-      span.text-primary #{data.disLike}
-      =' '
-    .col-auto
-      i.far.fa-eye
-      =' '
-      |#{data.hits}
-      =' '
-    .col-auto
-      i.far.fa-comment
-      =' '
-      |#{data.comments.length}
+  div(style='font-size: 14px')
+    .row
+      .col-auto.row
+        .col-auto
+          i.fas.fa-user-edit
+          =' '
+          if (data.user == "master")
+            span.badge.badge-info(style='font-size: 12px') #{data.user}
+          else
+            |#{data.user}
+          =' '
+        .col-auto
+          i.far.fa-clock
+          =' ' 
+          |#{moment(data.createTime).format("YYYY-MM-DD HH:mm:ss")}
+      .col-auto.row
+        .col-auto
+          i.far.fa-thumbs-up
+          =' '
+          span.text-danger #{data.like} 
+          =' '
+        .col-auto
+          i.far.fa-thumbs-down 
+          =' '
+          span.text-primary #{data.disLike}
+          =' '
+        .col-auto
+          i.far.fa-eye
+          =' '
+          |#{data.hits}
+          =' '
+        .col-auto
+          i.far.fa-comment
+          =' '
+          |#{data.comments.length}
   hr
-  .col-auto(style="white-space: pre-wrap;")
+  div(style="white-space: pre-wrap;")
     =data.content
   hr  
   each val in data.comments
     - var time = moment(val.createTime).format("YYYY-MM-DD HH:mm:ss")
-    div
-      .col-auto.bg-light
-        i.fas.fa-user-edit
-        =' '
-        =val.user
-        =' '
-        i.far.fa-clock
-        =' ' 
-        =time
-      .col-auto
+    div(style='font-size: 14px')
+      .row.bg-light
+        .col-auto
+          i.fas.fa-user-edit
+          =' '
+          =val.user
+          =' '
+        .col-auto
+          i.far.fa-clock
+          =' ' 
+          =time
+      .row.col-auto
         =val.comment
   hr
   form(action="/createComment?postNumber=" + data.postNumber method="post")
@@ -59,11 +66,13 @@ block content
           i.far.fa-comment
       input.form-control(type="text" name="comment" required)
   hr
+  //- 추천 버튼
   button.btn.btn-sm.btn-danger(id='like' type="button" onclick="likePost()"
     value=data.postNumber data-user=user)
     div
       i.far.fa-thumbs-up
   =' '
+  //- 반대 버튼
   button.btn.btn-sm.btn-primary(id='disLike' type="button" onclick="likePost(true)"
     value=data.postNumber data-user=user)
     div
@@ -71,8 +80,26 @@ block content
   = ' '
   button.btn-sm.btn.btn-secondary(type="button" onclick="location.href='/'") 목록
   = ' '
-  button.btn.btn-warning.btn-sm(type="button" onclick="location.href='/updatePost?postNumber=" + data.postNumber + "'") 수정
-  = ' '
-  button.btn.btn-danger.btn-sm(type="button" onclick="location.href='/deletePost?postNumber=" + data.postNumber + "'") 삭제
-
-  script(src="javascripts/readPost.js")
+  //- 게시글 작성자와 현재 접속자가 같으면 수정/삭제 버튼을 생성
+  if(user)
+    if(data.user == user.username)
+      button.btn.btn-warning.btn-sm(type="button" onclick="location.href='/updatePost?postNumber=" + data.postNumber + "'") 수정
+      = ' '
+      button.btn.btn-danger.btn-sm(type="button" data-toggle="modal" data-target="#deleteModal") 삭제
+      //- 부트스트랩에서 제공하는 modal 소스
+      //- 아직 attribute 하나 하나 파악하지 못함
+      //- 삭제 경고 모달
+      .modal.fade(id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalTitle" aria-hidden="true")
+        .modal-dialog.modal-dialog-centered(role="document")
+          .modal-content
+            .modal-header
+              h5.text-danger.modal-title(id="deleteModalTitle") 경고
+              button.close(type="button" data-dismiss="modal" aria-label="Close")
+                span(aria-hidden="true") &times;
+            .modal-body
+              strong 정말 삭제하시겠읍니까?
+            .modal-footer
+              button.btn.btn-secondary(type="button" data-dismiss="modal") 취소
+              button.btn.btn-danger(type="button" onclick="location.href='/deletePost?postNumber=" + data.postNumber + "'") 삭제  
+  
+  include askLogin.pug

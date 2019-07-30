@@ -1,0 +1,12 @@
+//- 로그인 모달
+.modal.fade(id="askLogin" tabindex="-1" role="dialog" aria-labelledby="askLoginTitle" aria-hidden="true")
+  .modal-dialog.modal-dialog-centered(role="document")
+    .modal-content
+      .modal-header
+        h5.modal-title(id="askLoginTitle") 알림
+        button.close(type="button" data-dismiss="modal" aria-label="Close")
+          span(aria-hidden="true") &times;
+      .modal-body 로그인이 필요합니다.
+      .modal-footer
+        button.btn.btn-secondary(type="button" data-dismiss="modal") 취소
+        button.btn.btn-primary(type="button" onclick="location.href='/login'") 로그인

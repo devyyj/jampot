@@ -8,7 +8,7 @@ function likePost(disLike = false) {
   else ID = 'like'
   const el = document.getElementById(ID)
   if (el.getAttribute('data-user') === null) {
-    window.location.href = '/login'
+    $('#askLogin').modal('show')
   } else {
     xhttp.onreadystatechange = function () {
       if (this.readyState === 4 && this.status === 200) {

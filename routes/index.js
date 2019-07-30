@@ -70,11 +70,6 @@ router.post('/createPost', function (req, res) {
 router.get('/readPost', async function (req, res) {
   await Board.updateOne({ postNumber: req.query.postNumber }, { $inc: { hits: 1 } })
   const result = await Board.findOne({ postNumber: req.query.postNumber })
-  // let vote
-  // if (req.user !== undefined) {
-  //   const voteResult = await Board.findOne({ postNumber: req.query.postNumber, 'voteList.user': req.user.username })
-  //   if (voteResult) vote = 'true'
-  // }
   res.render('readPost', { data: result, moment: moment, user: req.user })
 })
 
