@@ -18,10 +18,10 @@ block content
     table.mt-2.table.table-hover.table-sm(style='font-size: 12px')
       tbody
         each val in data.docs
-          tr(onclick='tableRow('+ val.postNumber + ')')
+          tr(onclick='tableRow('+ val.postNumber + ')' style="cursor: pointer;")
             th.align-middle.text-center(style="width: 59px") #{val.postNumber}
             td
-              div(style='font-size: 16px')
+              div(style='font-size: 16px; white-space: pre-wrap;')
                 =val.title
               .row
                 .col-auto
