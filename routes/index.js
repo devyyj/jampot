@@ -1,12 +1,13 @@
-var express = require('express')
-var passport = require('passport')
-var router = express.Router()
+const express = require('express')
+const passport = require('passport')
+const router = express.Router()
 const Board = require('../models/board')
-var Account = require('../models/account')
+const Account = require('../models/account')
 const url = require('url')
+const uploadFile = require('../common/aws-s3')
 
-var multer = require('multer')
-var upload = multer({ dest: 'uploads/' })
+const multer = require('multer')
+const upload = multer({ dest: 'uploads/' })
 
 const moment = require('moment')
 require('moment-timezone')
@@ -41,8 +42,8 @@ router.get('/createPost', function (req, res) {
   }
 })
 
-router.post('/createPost', upload.single('avatar'), function (req, res) {
-  console.log(req.file)
+router.post('/createPost', upload.single('uploadFile'), async function (req, res) {
+  // 게시글 업데이트
   if (req.query.postNumber !== 'undefined') {
     Board.updateOne({ postNumber: req.query.postNumber }, {
       title: req.body.title,
@@ -56,19 +57,17 @@ router.post('/createPost', upload.single('avatar'), function (req, res) {
       }
     })
   } else {
+    // 첨부 파일 저장
+    console.log(req.file)
+    uploadFile(req.file.originalname, req.file.filename, req.file.path)
+    // 게시글 저장
     const post = new Board({
       user: req.user.username,
       title: req.body.title,
       content: req.body.content
     })
-
-    post.save(function (err, result) {
-      if (err) {
-        res.render(err)
-      } else {
-        res.redirect('/readPost?postNumber=' + result.postNumber)
-      }
-    })
+    const result = await post.save()
+    res.redirect('/readPost?postNumber=' + result.postNumber)    
   }
 })
 

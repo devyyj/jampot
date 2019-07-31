@@ -6,7 +6,6 @@ var logger = require('morgan')
 const mongoose = require('mongoose')
 var passport = require('passport')
 var LocalStrategy = require('passport-local').Strategy
-
 var indexRouter = require('./routes/index')
 
 var app = express()
