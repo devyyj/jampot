@@ -1,7 +1,6 @@
-var xhttp = new XMLHttpRequest()
-
 // eslint-disable-next-line no-unused-vars
 function likePost(disLike = false) {
+  var xhttp = new XMLHttpRequest()
   console.log('call likePost()')
   let ID
   if (disLike) ID = 'disLike'

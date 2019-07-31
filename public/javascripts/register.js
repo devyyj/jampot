@@ -19,7 +19,7 @@ window.addEventListener('load', function () {
   })
 }, false)
 
-function isSame() {
+function isSame () {
   if (document.getElementById('pw1').value === document.getElementById('pw2').value) return true
   else return false
 }

@@ -2,18 +2,18 @@ extends layout
 
 block content
   hr
+  //- 제목 출력
   strong #{data.title}
   hr
+  //- 게시글 정보
   div(style='font-size: 14px')
     .row
       .col-auto.row
         .col-auto
           i.fas.fa-user-edit
           =' '
-          if (data.user == "master")
-            span.badge.badge-info(style='font-size: 12px') #{data.user}
-          else
-            |#{data.user}
+          span.user #{data.user}
+          //- span.badge.badge-info(style='font-size: 12px') #{data.user}
           =' '
         .col-auto
           i.far.fa-clock
@@ -40,9 +40,24 @@ block content
           =' '
           |#{data.comments.length}
   hr
+  //- 게시글 내용
   div(style="white-space: pre-wrap;")
     =data.content
-  hr  
+  hr
+  //- 이전글/다음글
+  .list-group(style='font-size: 14px')
+    if(next)
+      a.list-group-item.list-group-item-action(href="/readPost?postNumber=" + next.postNumber)
+        i.fas.fa-chevron-up
+        =' '
+        |다음글 : #{next.title}
+    if(prev)
+      a.list-group-item.list-group-item-action(href="/readPost?postNumber=" + prev.postNumber)
+        i.fas.fa-chevron-down
+        =' '
+        |이전글 : #{prev.title}
+  hr
+  //- 댓글 출력
   each val in data.comments
     - var time = moment(val.createTime).format("YYYY-MM-DD HH:mm:ss")
     div(style='font-size: 14px')
@@ -50,7 +65,7 @@ block content
         .col-auto
           i.fas.fa-user-edit
           =' '
-          =val.user
+          span.user #{val.user}
           =' '
         .col-auto
           i.far.fa-clock
@@ -59,14 +74,20 @@ block content
       .row.col-auto
         =val.comment
   hr
+  //- 댓글 작성란
   form(action="/createComment?postNumber=" + data.postNumber method="post")
     .input-group
       .input-group-prepend
         .input-group-text
           i.far.fa-comment
-      input.form-control(type="text" name="comment" required)
-      .input-group-append
-        button.btn.btn-outline-secondary(type="submit") 등록
+      if(user)
+        input.form-control(type="text" name='comment' required maxlength="400")
+        .input-group-append
+          button.btn.btn-outline-secondary(type="submit") 등록
+      else
+        input.form-control(type="text" placeholder="로그인이 필요합니다." disabled )
+        .input-group-append
+          button.btn.btn-outline-secondary(type="button" onclick="location.href='/login'") 로그인
   hr
   //- 추천 버튼
   button.btn.btn-sm.btn-danger(id='like' type="button" onclick="likePost()"
@@ -104,4 +125,5 @@ block content
               button.btn.btn-secondary(type="button" data-dismiss="modal") 취소
               button.btn.btn-danger(type="button" onclick="location.href='/deletePost?postNumber=" + data.postNumber + "'") 삭제  
   hr
+  //- 로그인 모달 포함
   include askLogin.pug

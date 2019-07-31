@@ -70,7 +70,9 @@ router.post('/createPost', function (req, res) {
 router.get('/readPost', async function (req, res) {
   await Board.updateOne({ postNumber: req.query.postNumber }, { $inc: { hits: 1 } })
   const result = await Board.findOne({ postNumber: req.query.postNumber })
-  res.render('readPost', { data: result, moment: moment, user: req.user })
+  const next = await Board.findOne({ _id: { $gt: result._id } }).sort({ _id: 1 })
+  const prev = await Board.findOne({ _id: { $lt: result._id } }).sort({ _id: -1 })
+  res.render('readPost', { data: result, moment: moment, user: req.user, next: next, prev: prev })
 })
 
 router.get('/updatePost', function (req, res) {
@@ -183,27 +185,17 @@ router.get('/ping', function (req, res) {
   res.status(200).send('pong!')
 })
 
-router.post('/createComment', function (req, res) {
+router.post('/createComment', async function (req, res) {
   if (req.user === undefined) {
     res.redirect('/login')
   } else {
-    Board.findOne({ postNumber: req.query.postNumber }, function (err, result) {
-      if (err) {
-        res.send(err)
-      } else {
-        result.comments.push({
-          comment: req.body.comment,
-          user: req.user.username
-        })
-        result.save(function (err, result) {
-          if (err) {
-            res.send(err)
-          } else {
-            res.redirect(req.header('Referer'))
-          }
-        })
-      }
+    const result = await Board.findOne({ postNumber: req.query.postNumber })
+    result.comments.push({
+      comment: req.body.comment,
+      user: req.user.username
     })
+    await result.save()
+    res.redirect(req.header('Referer'))
   }
 })
 

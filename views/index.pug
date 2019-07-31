@@ -14,6 +14,7 @@ block content
       button.btn.btn-sm.btn-primary(onclick="location.href='/logout'") 로그아웃
       =' '
     button.btn.btn-sm.btn-primary(id='createPost' value=user onclick='createPost()') 글쓰기
+    //- 게시글 리스트
     table.mt-2.table.table-hover.table-sm(style='font-size: 12px')
       tbody
         each val in data.docs
@@ -26,10 +27,7 @@ block content
                 .col-auto
                   i.fas.fa-user-edit
                   =' '
-                  if (val.user == "master")
-                    span.badge.badge-info(style='font-size: 12px') #{val.user}
-                  else
-                    |#{val.user}
+                  span.user #{val.user}
                   =' '
                 .col-auto
                   i.far.fa-clock
@@ -55,7 +53,7 @@ block content
                   i.far.fa-comment
                   =' '
                   |#{val.comments.length}
-
+    //- 페이지네이션
     nav(aria-label="Page navigation example")
       ul.pagination.pagination-sm.justify-content-center
         if data.hasPrevPage
