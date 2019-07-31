@@ -1,12 +1,15 @@
 extends layout
 
 block content    
-  form(action="/createPost?postNumber=" + data.postNumber method="post")
-    div(class="form-group")
+  form(action="/createPost?postNumber=" + data.postNumber method="post" enctype="multipart/form-data")
+    .form-group
       label 제목
       input(type="text" name="title" value=data.title required class="form-control" maxlength="40")
       label 내용
       textarea(name="content" cols="30" rows="10" required class="form-control" maxlength="4000")= data.content
+    .custom-file.mb-3
+      input.custom-file-input(type="file" id="customFile" name="avatar")
+      label.custom-file-label(for="customFile") Choose file
     input(type="submit" class="btn btn-primary" value="등록")
     =' '
     input(type="button" class="btn btn-secondary" value="취소" 

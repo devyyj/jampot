@@ -3,8 +3,12 @@ var passport = require('passport')
 var router = express.Router()
 const Board = require('../models/board')
 var Account = require('../models/account')
-const moment = require('moment')
 const url = require('url')
+
+var multer = require('multer')
+var upload = multer({ dest: 'uploads/' })
+
+const moment = require('moment')
 require('moment-timezone')
 moment.tz.setDefault('Asia/Seoul')
 moment.locale('ko')
@@ -37,7 +41,8 @@ router.get('/createPost', function (req, res) {
   }
 })
 
-router.post('/createPost', function (req, res) {
+router.post('/createPost', upload.single('avatar'), function (req, res) {
+  console.log(req.file)
   if (req.query.postNumber !== 'undefined') {
     Board.updateOne({ postNumber: req.query.postNumber }, {
       title: req.body.title,
