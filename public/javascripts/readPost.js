@@ -1,4 +1,5 @@
-// eslint-disable-next-line no-unused-vars
+/* eslint-disable no-unused-vars */
+/* eslint-disable space-before-function-paren */
 function likePost(disLike = false) {
   var xhttp = new XMLHttpRequest()
   console.log('call likePost()')

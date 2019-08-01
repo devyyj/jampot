@@ -12,6 +12,7 @@ const schema = new mongoose.Schema({
   like: { type: Number, default: 0 },
   disLike: { type: Number, default: 0 },
   voteList: [{ user: String }],
+  uploadFiles: [String],
   comments: [{
     comment: String,
     user: String,

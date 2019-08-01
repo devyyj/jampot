@@ -43,31 +43,36 @@ router.get('/createPost', function (req, res) {
 })
 
 router.post('/createPost', upload.single('uploadFile'), async function (req, res) {
-  // 게시글 업데이트
-  if (req.query.postNumber !== 'undefined') {
-    Board.updateOne({ postNumber: req.query.postNumber }, {
-      title: req.body.title,
-      content: req.body.content
-    }, function (err, result) {
-      if (err) {
-        res.render(err)
-      } else {
-        console.log(result)
-        res.redirect('/readPost?postNumber=' + req.query.postNumber)
+  try {
+    // 게시글 업데이트
+    let uploadFileURL
+    if (req.query.postNumber !== 'undefined') {
+      if (req.file) uploadFileURL = await uploadFile(req.file.originalname, req.file.filename, req.file.path)
+      // eslint-disable-next-line prefer-const
+      let doc = {
+        title: req.body.title,
+        content: req.body.content
       }
-    })
-  } else {
-    // 첨부 파일 저장
-    console.log(req.file)
-    uploadFile(req.file.originalname, req.file.filename, req.file.path)
-    // 게시글 저장
-    const post = new Board({
-      user: req.user.username,
-      title: req.body.title,
-      content: req.body.content
-    })
-    const result = await post.save()
-    res.redirect('/readPost?postNumber=' + result.postNumber)    
+      if (uploadFileURL) doc.uploadFiles = [uploadFileURL]
+      await Board.updateOne({ postNumber: req.query.postNumber }, doc)
+      res.redirect('/readPost?postNumber=' + req.query.postNumber)
+    } else {
+      // 첨부 파일 저장
+      if (req.file) uploadFileURL = await uploadFile(req.file.originalname, req.file.filename, req.file.path)
+      // 게시글 저장
+      // eslint-disable-next-line prefer-const
+      let doc = {
+        user: req.user.username,
+        title: req.body.title,
+        content: req.body.content
+      }
+      if (uploadFileURL) doc.uploadFiles = [uploadFileURL]
+      const post = new Board(doc)
+      const result = await post.save()
+      res.redirect('/readPost?postNumber=' + result.postNumber)
+    }
+  } catch (error) {
+    console.log(error)
   }
 })
 

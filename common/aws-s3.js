@@ -1,24 +1,34 @@
+/* eslint-disable space-before-function-paren */
 const path = require('path')
 const AWS = require('aws-sdk')
 const fs = require('fs')
+const proxy = require('proxy-agent')
 
-AWS.config.update({ region: 'ap-northeast-2' });
+AWS.config.update({
+  sslEnabled: false,
+  region: 'ap-northeast-2'
+  // , httpOptions: { agent: proxy('http://210.112.194.110:3128') }
+})
 
-const s3 = new AWS.S3();
+const s3 = new AWS.S3()
 
 async function uploadFile(OriginalName, fileName, filePath) {
-  var fileStream = fs.createReadStream(filePath);
-  fileStream.on('error', function (err) {
-    console.log('File Error', err);
-  });
-  
-  uploadParams = {
-    Bucket: 'free-board-image',
-    Body: fileStream,
-    Key: fileName + path.extname(OriginalName)
+  try {
+    var fileStream = fs.createReadStream(filePath)
+    fileStream.on('error', function (err) {
+      console.log('File Error', err)
+    })
+    const uploadParams = {
+      Bucket: 'free-board-image',
+      Body: fileStream,
+      Key: fileName + path.extname(OriginalName)
+    }
+    const result = await s3.upload(uploadParams).promise()
+    fs.unlinkSync(filePath)
+    return result.Location
+  } catch (error) {
+    console.log(error)
   }
-  
-  const data = await s3.upload(uploadParams).promise()  
 }
 
 module.exports = uploadFile
