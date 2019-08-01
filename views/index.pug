@@ -15,11 +15,16 @@ block content
       =' '
     button.btn.btn-sm.btn-primary(id='createPost' value=user onclick='createPost()') 글쓰기
     //- 게시글 리스트
-    table.mt-2.table.table-hover.table-sm(style='font-size: 12px')
+    table.mt-3.table.table-hover.table-sm(style='font-size: 12px')
       tbody
         each val in data.docs
           tr(onclick='tableRow('+ val.postNumber + ')' style="cursor: pointer;")
-            th.align-middle.text-center(style="width: 59px") #{val.postNumber}
+            th.align-middle.text-center(style="width: 59px")
+              if(val.uploadFiles[0])
+                .text-center
+                  img.border(style="width:50px; height: 50px;" id='img' src=val.uploadFiles[0] alt="" )
+              else
+                =val.postNumber
             td
               div(style='font-size: 16px; white-space: pre-wrap;')
                 =val.title
