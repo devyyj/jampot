@@ -24,6 +24,6 @@ document.getElementById('createPostForm').addEventListener('submit', function (e
   spanEl.setAttribute('role', 'status')
   spanEl.setAttribute('aria-hidden', 'true')
   el.setAttribute('disabled', true)
-  el.value = ''
+  el.innerHTML = ''
   el.appendChild(spanEl)
 })

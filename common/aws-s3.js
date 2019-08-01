@@ -5,7 +5,6 @@ const fs = require('fs')
 const proxy = require('proxy-agent')
 
 AWS.config.update({
-  sslEnabled: false,
   region: 'ap-northeast-2'
   // , httpOptions: { agent: proxy('http://210.112.194.110:3128') }
 })

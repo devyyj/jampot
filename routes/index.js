@@ -18,13 +18,13 @@ router.get('/test', function (req, res) {
   res.render('test')
 })
 
+// 게시글 리스트, 메인 화면
 router.get('/', async function (req, res, next) {
   const opt = {
     sort: { postNumber: -1 },
     page: Number(req.query.page) || 1,
     limit: 10
   }
-
   Board.paginate({}, opt, function (err, result) {
     if (err) {
       console.log(err)
@@ -34,19 +34,25 @@ router.get('/', async function (req, res, next) {
   })
 })
 
-router.get('/createPost', function (req, res) {
+// 새글 작성 화면
+router.get('/createPost', async function (req, res) {
   if (req.user === undefined) {
     res.redirect('/login')
   } else {
+    // 연속 게시글 불가 기능
+    const prev = await Board.findOne({}).sort({ _id: -1 })
+    if (prev.user === req.user.username) return res.render('warning', { message: '연속으로 글을 작성할 수 없습니다.' })
     res.render('createPost', { data: {} })
   }
 })
 
+// 새글 생성과 수정을 함께 처리
 router.post('/createPost', upload.single('uploadFile'), async function (req, res) {
   try {
     // 게시글 업데이트
     let uploadFileURL
     if (req.query.postNumber !== 'undefined') {
+      // 첨부 파일 수정
       if (req.file) uploadFileURL = await uploadFile(req.file.originalname, req.file.filename, req.file.path)
       // eslint-disable-next-line prefer-const
       let doc = {
@@ -56,7 +62,11 @@ router.post('/createPost', upload.single('uploadFile'), async function (req, res
       if (uploadFileURL) doc.uploadFiles = [uploadFileURL]
       await Board.updateOne({ postNumber: req.query.postNumber }, doc)
       res.redirect('/readPost?postNumber=' + req.query.postNumber)
+      // 새글 업로드
     } else {
+      // 연속 게시글 불가 기능
+      const prev = await Board.findOne({}).sort({ _id: -1 })
+      if (prev.user === req.user.username) return res.render('warning', { message: '연속으로 글을 작성할 수 없습니다.' })
       // 첨부 파일 저장
       if (req.file) uploadFileURL = await uploadFile(req.file.originalname, req.file.filename, req.file.path)
       // 게시글 저장
@@ -76,6 +86,7 @@ router.post('/createPost', upload.single('uploadFile'), async function (req, res
   }
 })
 
+// 게시글 화면
 router.get('/readPost', async function (req, res) {
   await Board.updateOne({ postNumber: req.query.postNumber }, { $inc: { hits: 1 } })
   const result = await Board.findOne({ postNumber: req.query.postNumber })
