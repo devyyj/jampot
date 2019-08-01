@@ -1,4 +1,3 @@
-
 document.getElementById('customFile').addEventListener('change', function (event) {
   const fileName = this.value.split('\\').pop()
   const el = document.getElementById('customFileLabel')
@@ -15,4 +14,16 @@ document.getElementById('customFile').addEventListener('change', function (event
     el.classList.add('selected')
     el.innerHTML = fileName
   }
+})
+
+document.getElementById('createPostForm').addEventListener('submit', function (event) {
+  console.log('call')
+  const el = document.getElementById('submit')
+  const spanEl = document.createElement('span')
+  spanEl.classList.add('spinner-border', 'spinner-border-sm')
+  spanEl.setAttribute('role', 'status')
+  spanEl.setAttribute('aria-hidden', 'true')
+  el.setAttribute('disabled', true)
+  el.value = ''
+  el.appendChild(spanEl)
 })
