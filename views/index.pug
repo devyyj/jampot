@@ -1,85 +1,77 @@
 extends layout
 
-block content
-  .mt-2
-    if (!user)
-      button.btn.btn-sm.btn-primary(onclick="location.href='/login'") 로그인
-      =" "
-      button.btn.btn-sm.btn-primary(onclick="location.href='/register'") 회원가입
-      =' '
-    if (user)
-      p 방문해주셔서 고맙읍니다, 
-        kbd #{user.nickname}
-        |님
-      button.btn.btn-sm.btn-primary(onclick="location.href='/logout'") 로그아웃
-      =' '
-    button.btn.btn-sm.btn-primary(id='createPost' value=user onclick='createPost()') 글쓰기
-    //- 게시글 리스트
-    table.mt-3.table.table-hover.table-sm(style='font-size: 12px')
-      tbody
-        each val in data.docs
-          tr(onclick='tableRow('+ val.postNumber + ')' style="cursor: pointer;")
-            th.align-middle.text-center(style="width: 59px")
-              if(val.uploadFiles[0])
-                .text-center
-                  img.border(style="width:50px; height: 50px;" id='img' src=val.uploadFiles[0] alt="" )
-              else
-                =val.postNumber
-            td
-              div(style='font-size: 16px; white-space: pre-wrap;')
-                =val.title
-              .row
-                .col-auto
-                  //- 닉네임
-                  i.fas.fa-user-edit
-                  =' '
-                  span.user #{val.user.nickname}
-                  =' '
-                .col-auto
-                  i.far.fa-clock
-                  =' ' 
-                  |#{moment(val.createTime).fromNow()}
-              .row
-                .col-auto
-                  i.far.fa-thumbs-up
-                  =' '
-                  span.text-danger #{val.like} 
-                  =' '
-                .col-auto
-                  i.far.fa-thumbs-down 
-                  =' '
-                  span.text-primary #{val.disLike}
-                  =' '
-                .col-auto
-                  i.far.fa-eye
-                  =' '
-                  |#{val.hits}
-                  =' '
-                .col-auto
-                  i.far.fa-comment
-                  =' '
-                  |#{val.comments.length}
-    //- 페이지네이션
-    nav(aria-label="Page navigation example")
-      ul.pagination.pagination-sm.justify-content-center
-        if data.hasPrevPage
-          li.page-item
-            a.page-link(href="/?page="+data.prevPage aria-label="Previous")
-              span(aria-hidden="true") &laquo;
-        else
-          li.page-item.disabled
-            a.page-link(href="/?page="+data.prevPage aria-label="Previous")
-              span(aria-hidden="true") &laquo;
+block content  
+  if (user)
+    p 방문해주셔서 고맙읍니다, 
+      kbd #{user.nickname}
+      |님
+  button.btn.btn-sm.btn-primary(id='createPost' value=user onclick='createPost()') 글쓰기
+  //- 게시글 리스트
+  table.mt-3.table.table-hover.table-sm(style='font-size: 12px')
+    tbody
+      each val in data.docs
+        tr(onclick='tableRow('+ val.postNumber + ')' style="cursor: pointer;")
+          th.align-middle.text-center(style="width: 59px")
+            if(val.uploadFiles[0])
+              .text-center
+                img.border(style="width:50px; height: 50px;" id='img' src=val.uploadFiles[0] alt="" )
+            else
+              =val.postNumber
+          td
+            div(style='font-size: 16px; white-space: pre-wrap;')
+              =val.title
+            .row
+              .col-auto
+                //- 닉네임
+                i.fas.fa-user-edit
+                =' '
+                span.user #{val.user.nickname}
+                =' '
+              .col-auto
+                i.far.fa-clock
+                =' ' 
+                |#{moment(val.createTime).fromNow()}
+            .row
+              .col-auto
+                i.far.fa-thumbs-up
+                =' '
+                span.text-danger #{val.like} 
+                =' '
+              .col-auto
+                i.far.fa-thumbs-down 
+                =' '
+                span.text-primary #{val.disLike}
+                =' '
+              .col-auto
+                i.far.fa-eye
+                =' '
+                |#{val.hits}
+                =' '
+              .col-auto
+                i.far.fa-comment
+                =' '
+                |#{val.comments.length}
+  //- 페이지네이션
+  nav(aria-label="Page navigation example")
+    ul.pagination.pagination-sm.justify-content-center
+      if data.hasPrevPage
         li.page-item
-          a.page-link #{data.page} / #{data.totalPages}
-        if data.hasNextPage
-          li.page-item
+          a.page-link(href="/?page="+data.prevPage aria-label="Previous")
+            span(aria-hidden="true") &laquo;
+      else
+        li.page-item.disabled
+          a.page-link(href="/?page="+data.prevPage aria-label="Previous")
+            span(aria-hidden="true") &laquo;
+      li.page-item
+        a.page-link #{data.page} / #{data.totalPages}
+      if data.hasNextPage
+        li.page-item
+        a.page-link(href="/?page="+data.nextPage aria-label="Next")
+          span(aria-hidden="true") &raquo;  
+      else
+        li.page-item.disabled
           a.page-link(href="/?page="+data.nextPage aria-label="Next")
-            span(aria-hidden="true") &raquo;  
-        else
-          li.page-item.disabled
-            a.page-link(href="/?page="+data.nextPage aria-label="Next")
-              span(aria-hidden="true") &raquo;
+            span(aria-hidden="true") &raquo;
 
   include askLogin.pug
   script(src="javascripts/index.js")

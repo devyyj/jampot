@@ -4,7 +4,7 @@ window.onload = function () {
   for (const key in object) {
     if (object.hasOwnProperty(key)) {
       const element = object[key]
-      if (element.innerHTML === 'master') {
+      if (element.innerHTML === '운영자') {
         element.classList.add('badge', 'badge-info')
         element.setAttribute('style', 'font-size: 12px;')
       }

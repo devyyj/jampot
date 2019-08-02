@@ -1,3 +1,4 @@
+block variables
 doctype html
 html
   head
@@ -16,8 +17,11 @@ html
           span.navbar-toggler-icon
         .collapse.navbar-collapse(id="navbarNavAltMarkup")
           .navbar-nav
-            a.nav-item.nav-link(href="#") 나의 정보
-            //- <a class="nav-item nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+            if (!user)
+              a.nav-item.nav-link(href="/login") 로그인
+              a.nav-item.nav-link(href="/register") 회원가입
+            if (user)
+              a.nav-item.nav-link(href="/logout") 로그아웃
       block content
       footer.py-3.bg-white.row.mt-3
         span.m-auto(style="font-size: 12px") Copyright 2019. YoungYong Jo. All Rights Reserved.
