@@ -2,7 +2,7 @@ const express = require('express')
 const passport = require('passport')
 const router = express.Router()
 const Board = require('../models/board')
-const Account = require('../models/account')
+const User = require('../models/user')
 const url = require('url')
 const uploadFile = require('../common/aws-s3')
 
@@ -20,18 +20,18 @@ router.get('/test', function (req, res) {
 
 // 게시글 리스트, 메인 화면
 router.get('/', async function (req, res, next) {
-  const opt = {
-    sort: { postNumber: -1 },
-    page: Number(req.query.page) || 1,
-    limit: 10
-  }
-  Board.paginate({}, opt, function (err, result) {
-    if (err) {
-      console.log(err)
-    } else {
-      res.render('index', { data: result, user: req.user, moment: moment })
+  try {
+    const opt = {
+      sort: { postNumber: -1 },
+      page: Number(req.query.page) || 1,
+      limit: 10,
+      populate: 'user'
     }
-  })
+    const result = await Board.paginate({}, opt)
+    res.render('index', { data: result, user: req.user, moment: moment })
+  } catch (error) {
+    console.log(error)
+  }
 })
 
 // 새글 작성 화면
@@ -41,7 +41,9 @@ router.get('/createPost', async function (req, res) {
   } else {
     // 연속 게시글 불가 기능
     const prev = await Board.findOne({}).sort({ _id: -1 })
-    if (prev.user === req.user.username) return res.render('warning', { message: '연속으로 글을 작성할 수 없습니다.' })
+    if (prev) {
+      if (prev.user === req.user.username) return res.render('warning', { message: '연속으로 글을 작성할 수 없습니다.' })
+    }
     res.render('createPost', { data: {} })
   }
 })
@@ -66,13 +68,16 @@ router.post('/createPost', upload.single('uploadFile'), async function (req, res
     } else {
       // 연속 게시글 불가 기능
       const prev = await Board.findOne({}).sort({ _id: -1 })
-      if (prev.user === req.user.username) return res.render('warning', { message: '연속으로 글을 작성할 수 없습니다.' })
+      if (prev) {
+        if (prev.user === req.user.username) return res.render('warning', { message: '연속으로 글을 작성할 수 없습니다.' })
+      }
       // 첨부 파일 저장
       if (req.file) uploadFileURL = await uploadFile(req.file.originalname, req.file.filename, req.file.path)
       // 게시글 저장
+      const user = await User.findOne({ username: req.user.username })
       // eslint-disable-next-line prefer-const
       let doc = {
-        user: req.user.username,
+        user: user._id,
         title: req.body.title,
         content: req.body.content
       }
@@ -86,10 +91,12 @@ router.post('/createPost', upload.single('uploadFile'), async function (req, res
   }
 })
 
-// 게시글 화면
+// 게시글 읽기 화면
 router.get('/readPost', async function (req, res) {
   await Board.updateOne({ postNumber: req.query.postNumber }, { $inc: { hits: 1 } })
   const result = await Board.findOne({ postNumber: req.query.postNumber })
+    .populate('user', 'nickname')
+    .populate('comments.user')
   const next = await Board.findOne({ _id: { $gt: result._id } }).sort({ _id: 1 })
   const prev = await Board.findOne({ _id: { $lt: result._id } }).sort({ _id: -1 })
   res.render('readPost', { data: result, moment: moment, user: req.user, next: next, prev: prev })
@@ -137,7 +144,7 @@ router.get('/likePost', async function (req, res) {
     let msg
     const voteResult = await Board.findOne({
       postNumber: req.query.postNumber,
-      'voteList.user': req.user.username
+      voteList: req.user.username
     })
     if (voteResult) msg = '이미 "추천/반대" 하셨읍니다.'
     else {
@@ -150,26 +157,27 @@ router.get('/likePost', async function (req, res) {
         inc = { like: 1 }
       }
       await Board.updateOne({ postNumber: req.query.postNumber },
-        { $inc: inc, $push: { voteList: { user: req.user.username } } })
+        { $inc: inc, $push: { voteList: req.user.username } })
     }
     res.send(msg)
   }
 })
 
-// passport
+// User 생성, 유저 생성, 회원 가입
 router.get('/register', function (req, res) {
   res.render('register', {})
 })
 
 router.post('/register', function (req, res) {
-  Account.register(new Account({ username: req.body.username }), req.body.password, function (err, account) {
-    if (err) {
-      return res.render('register', { err: err })
-    }
-    passport.authenticate('local')(req, res, function () {
-      res.redirect('/')
+  User.register(new User({ username: req.body.username, nickname: req.body.nickname }),
+    req.body.password, function (err, User) {
+      if (err) {
+        return res.render('register', { err: err })
+      }
+      passport.authenticate('local')(req, res, function () {
+        res.redirect('/')
+      })
     })
-  })
 })
 
 router.get('/login', function (req, res) {
@@ -206,16 +214,21 @@ router.get('/ping', function (req, res) {
 })
 
 router.post('/createComment', async function (req, res) {
-  if (req.user === undefined) {
-    res.redirect('/login')
-  } else {
-    const result = await Board.findOne({ postNumber: req.query.postNumber })
-    result.comments.push({
-      comment: req.body.comment,
-      user: req.user.username
-    })
-    await result.save()
-    res.redirect(req.header('Referer'))
+  try {
+    if (req.user === undefined) {
+      res.redirect('/login')
+    } else {
+      const result = await Board.findOne({ postNumber: req.query.postNumber })
+      const user = await User.findOne({ username: req.user.username })
+      result.comments.push({
+        user: user._id,
+        comment: req.body.comment
+      })
+      await result.save()
+      res.redirect(req.header('Referer'))
+    }
+  } catch (error) {
+    console.log(error)
   }
 })
 

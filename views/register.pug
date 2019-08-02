@@ -3,10 +3,15 @@ extends layout
 block content
   form.needs-validation(action="/register" method="post" novalidate)
     .form-group.row
-      label.col-sm-2.col-form-label.text-lowercase 아이디
+      label.col-sm-2.col-form-label 아이디
       .col
-        input.form-control(placeholder="아이디 입력" name='username' required autofocus pattern="[A-Za-z0-9]{4,10}")
-        small.form-text.text-muted 영문자 또는 숫자. (길이 4 ~ 10)
+        input.form-control.text-lowercase(placeholder="아이디 입력" name='username' required autofocus pattern="[A-Za-z0-9]{4,10}")
+        small.form-text.text-muted 영문자 숫자 조합. (길이 4 ~ 10)
+    .form-group.row
+      label.col-sm-2.col-form-label 닉네임
+      .col
+        input.form-control.text-lowercase(placeholder="닉네임 입력" name='nickname' required maxlength="8" pattern="[ㄱ-ㅎ가-힣a-zA-Z0-9]{2,8}")
+        small.form-text.text-muted 한글 영문자 숫자 조합. (길이 2 ~ 8)
     .form-group.row
       label.col-sm-2.col-form-label Password
       .col
@@ -15,7 +20,7 @@ block content
         input.mt-1.form-control(type="password" placeholder="비밀번호 확인" name="password2" id='pw2'
           required pattern="^(?=.*?[a-z])(?=.*?[0-9]).{8,}$")
         .invalid-feedback(id='feedback')
-        small.form-text.text-muted 최소 하나 이상의 영문자, 숫자. (최소 길이 8)
+        small.form-text.text-muted 최소 하나 이상의 영문자 숫자 조합. (최소 길이 8)
         br
         button.btn.btn-outline-primary(type='submit') 회원가입
         =" "

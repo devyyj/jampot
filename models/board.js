@@ -5,17 +5,17 @@ const mongoosePaginate = require('mongoose-paginate-v2')
 mai.initialize(mongoose.connection)
 
 const schema = new mongoose.Schema({
-  user: String,
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'user' },
   title: String,
   content: String,
   hits: { type: Number, default: 0 },
   like: { type: Number, default: 0 },
   disLike: { type: Number, default: 0 },
-  voteList: [{ user: String }],
+  voteList: [String],
   uploadFiles: [String],
   comments: [{
     comment: String,
-    user: String,
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'user' },
     createTime: { type: Date, default: Date.now }
   }],
   createTime: { type: Date, default: Date.now },

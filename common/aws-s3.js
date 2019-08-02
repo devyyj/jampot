@@ -6,7 +6,7 @@ const proxy = require('proxy-agent')
 
 AWS.config.update({
   region: 'ap-northeast-2'
-  // , httpOptions: { agent: proxy('http://210.112.194.110:3128') }
+  , httpOptions: { agent: proxy('http://210.112.194.110:3128') }
 })
 
 const s3 = new AWS.S3()

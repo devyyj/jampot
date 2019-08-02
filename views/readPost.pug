@@ -9,9 +9,10 @@ block content
     .row
       .col-auto.row
         .col-auto
+          //- 작성자
           i.fas.fa-user-edit
           =' '
-          span.user #{data.user}
+          span.user #{data.user.nickname}
           =' '
         .col-auto
           i.far.fa-clock
@@ -66,7 +67,7 @@ block content
         .col-auto.my-1
           i.fas.fa-user-edit
           =' '
-          span.user #{val.user}
+          span.user #{val.user.nickname}
           =' '
         .col-auto.my-1
           i.far.fa-clock

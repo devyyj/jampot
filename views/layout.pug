@@ -10,8 +10,14 @@ html
     <link href="https://fonts.googleapis.com/css?family=Nanum+Gothic+Coding&display=swap" rel="stylesheet">
   body
     .container
-      nav.navbar.navbar-white.bg-white.mb-3.row
-        a.navbar-brand(href="/") 요피랜드
+      nav.navbar.navbar-expand-lg.navbar-light.bg-white.row.mb-3
+        a.navbar-brand.text-primary(href="/") 요피랜드
+        button.navbar-toggler(type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation")
+          span.navbar-toggler-icon
+        .collapse.navbar-collapse(id="navbarNavAltMarkup")
+          .navbar-nav
+            a.nav-item.nav-link(href="#") 나의 정보
+            //- <a class="nav-item nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
       block content
       footer.py-3.bg-white.row.mt-3
         span.m-auto(style="font-size: 12px") Copyright 2019. YoungYong Jo. All Rights Reserved.
