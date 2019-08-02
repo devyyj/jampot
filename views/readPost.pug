@@ -107,7 +107,7 @@ block content
   = ' '
   //- 게시글 작성자와 현재 접속자가 같으면 수정/삭제 버튼을 생성
   if(user)
-    if(data.user == user.username)
+    if(data.user.nickname == user.nickname)
       button.btn.btn-warning(type="button" onclick="location.href='/updatePost?postNumber=" + data.postNumber + "'") 수정
       = ' '
       button.btn.btn-danger(type="button" data-toggle="modal" data-target="#deleteModal") 삭제

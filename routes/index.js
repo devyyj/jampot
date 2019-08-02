@@ -93,49 +93,51 @@ router.post('/createPost', upload.single('uploadFile'), async function (req, res
 
 // 게시글 읽기 화면
 router.get('/readPost', async function (req, res) {
-  await Board.updateOne({ postNumber: req.query.postNumber }, { $inc: { hits: 1 } })
-  const result = await Board.findOne({ postNumber: req.query.postNumber })
-    .populate('user', 'nickname')
-    .populate('comments.user')
-  const next = await Board.findOne({ _id: { $gt: result._id } }).sort({ _id: 1 })
-  const prev = await Board.findOne({ _id: { $lt: result._id } }).sort({ _id: -1 })
-  res.render('readPost', { data: result, moment: moment, user: req.user, next: next, prev: prev })
-})
-
-router.get('/updatePost', function (req, res) {
-  if (req.user === undefined) {
-    res.redirect('/login')
-  } else {
-    Board.findOne({ postNumber: req.query.postNumber }, function (err, result) {
-      if (err) {
-        res.render(err)
-      } else {
-        if (result.user !== req.user.username) {
-          res.render('warning')
-        } else {
-          res.render('createPost', { data: result })
-        }
-      }
-    })
+  try {
+    await Board.updateOne({ postNumber: req.query.postNumber }, { $inc: { hits: 1 } })
+    const result = await Board.findOne({ postNumber: req.query.postNumber })
+      .populate('user', 'nickname')
+      .populate('comments.user')
+    const next = await Board.findOne({ _id: { $gt: result._id } }).sort({ _id: 1 })
+    const prev = await Board.findOne({ _id: { $lt: result._id } }).sort({ _id: -1 })
+    res.render('readPost', { data: result, moment: moment, user: req.user, next: next, prev: prev })
+  } catch (error) {
+    console.log(error)
   }
 })
 
-router.get('/deletePost', function (req, res) {
-  if (req.user === undefined) {
-    res.redirect('/login')
-  } else {
-    Board.findOne({ postNumber: req.query.postNumber }, function (err, result) {
-      if (err) {
-        res.send(err)
+router.get('/updatePost', async function (req, res) {
+  try {
+    if (req.user === undefined) {
+      res.redirect('/login')
+    } else {
+      const result = await Board.findOne({ postNumber: req.query.postNumber }).populate('user')
+      if (result.user.nickname !== req.user.nickname) {
+        res.render('warning', {message: '권한이 없읍니다.'})
       } else {
-        if (result.user !== req.user.username) {
-          res.render('warning')
-        } else {
-          result.delete({ postNumber: req.query.postNumber })
-          res.redirect('/')
-        }
+        res.render('createPost', { data: result })
       }
-    })
+    }
+  } catch (error) {
+    console.log(error)
+  }  
+})
+
+router.get('/deletePost', async function (req, res) {
+  try {
+    if (req.user === undefined) {
+      res.redirect('/login')
+    } else {
+      const result = await Board.findOne({ postNumber: req.query.postNumber }).populate('user')
+      if (result.user.nickname !== req.user.nickname) {
+        res.render('warning', {message: '권한이 없읍니다.'})
+      } else {
+        result.delete({ postNumber: req.query.postNumber })
+        res.redirect('/')
+      }
+    }
+  } catch (error) {
+    console.log(error)
   }
 })
 
