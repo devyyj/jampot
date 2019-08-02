@@ -2,7 +2,7 @@ extends layout
 
 block content
   //- 게시글 제목
-  .row.bg-light.p-3.my-3
+  .row.bg-light.p-3.mb-3
     strong(style="white-space: pre-wrap;") #{data.title}
   //- 게시글 정보
   div(style='font-size: 14px;')
@@ -90,41 +90,40 @@ block content
         .input-group-append
           button.btn.btn-outline-secondary(type="button" onclick="location.href='/login'") 로그인
   hr.row
-  .mb-3
-    //- 추천 버튼
-    button.btn.btn-danger(id='like' type="button" onclick="likePost()"
-      value=data.postNumber data-user=user)
-      div
-        i.far.fa-thumbs-up
-    =' '
-    //- 반대 버튼
-    button.btn.btn-primary(id='disLike' type="button" onclick="likePost(true)"
-      value=data.postNumber data-user=user)
-      div
-        i.far.fa-thumbs-down 
-    = ' '
-    button.btn.btn-secondary(type="button" onclick="location.href='/'") 목록
-    = ' '
-    //- 게시글 작성자와 현재 접속자가 같으면 수정/삭제 버튼을 생성
-    if(user)
-      if(data.user == user.username)
-        button.btn.btn-warning(type="button" onclick="location.href='/updatePost?postNumber=" + data.postNumber + "'") 수정
-        = ' '
-        button.btn.btn-danger(type="button" data-toggle="modal" data-target="#deleteModal") 삭제
-        //- 부트스트랩에서 제공하는 modal 소스
-        //- 아직 attribute 하나 하나 파악하지 못함
-        //- 삭제 경고 모달
-        .modal.fade(id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalTitle" aria-hidden="true")
-          .modal-dialog.modal-dialog-centered(role="document")
-            .modal-content
-              .modal-header
-                h5.text-danger.modal-title(id="deleteModalTitle") 경고
-                button.close(type="button" data-dismiss="modal" aria-label="Close")
-                  span(aria-hidden="true") &times;
-              .modal-body
-                strong 정말 삭제하시겠읍니까?
-              .modal-footer
-                button.btn.btn-secondary(type="button" data-dismiss="modal") 취소
-                button.btn.btn-danger(type="button" onclick="location.href='/deletePost?postNumber=" + data.postNumber + "'") 삭제  
+  //- 추천 버튼
+  button.btn.btn-danger(id='like' type="button" onclick="likePost()"
+    value=data.postNumber data-user=user)
+    div
+      i.far.fa-thumbs-up
+  =' '
+  //- 반대 버튼
+  button.btn.btn-primary(id='disLike' type="button" onclick="likePost(true)"
+    value=data.postNumber data-user=user)
+    div
+      i.far.fa-thumbs-down 
+  = ' '
+  button.btn.btn-secondary(type="button" onclick="location.href='/'") 목록
+  = ' '
+  //- 게시글 작성자와 현재 접속자가 같으면 수정/삭제 버튼을 생성
+  if(user)
+    if(data.user == user.username)
+      button.btn.btn-warning(type="button" onclick="location.href='/updatePost?postNumber=" + data.postNumber + "'") 수정
+      = ' '
+      button.btn.btn-danger(type="button" data-toggle="modal" data-target="#deleteModal") 삭제
+      //- 부트스트랩에서 제공하는 modal 소스
+      //- 아직 attribute 하나 하나 파악하지 못함
+      //- 삭제 경고 모달
+      .modal.fade(id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalTitle" aria-hidden="true")
+        .modal-dialog.modal-dialog-centered(role="document")
+          .modal-content
+            .modal-header
+              h5.text-danger.modal-title(id="deleteModalTitle") 경고
+              button.close(type="button" data-dismiss="modal" aria-label="Close")
+                span(aria-hidden="true") &times;
+            .modal-body
+              strong 정말 삭제하시겠읍니까?
+            .modal-footer
+              button.btn.btn-secondary(type="button" data-dismiss="modal") 취소
+              button.btn.btn-danger(type="button" onclick="location.href='/deletePost?postNumber=" + data.postNumber + "'") 삭제  
   //- 로그인 모달 포함
   include askLogin.pug
