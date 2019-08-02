@@ -106,6 +106,7 @@ router.get('/readPost', async function (req, res) {
   }
 })
 
+// 게시글 수정 처리
 router.get('/updatePost', async function (req, res) {
   try {
     if (req.user === undefined) {
@@ -123,6 +124,7 @@ router.get('/updatePost', async function (req, res) {
   }  
 })
 
+// 게시글 삭제 처리
 router.get('/deletePost', async function (req, res) {
   try {
     if (req.user === undefined) {
@@ -141,6 +143,7 @@ router.get('/deletePost', async function (req, res) {
   }
 })
 
+// 추천 반대 처리
 router.get('/likePost', async function (req, res) {
   if (req.user !== undefined) {
     let msg
@@ -182,6 +185,7 @@ router.post('/register', function (req, res) {
     })
 })
 
+// 로그인 화면
 router.get('/login', function (req, res) {
   const backURL = req.header('Referer')
   if (backURL) {
@@ -193,6 +197,7 @@ router.get('/login', function (req, res) {
   res.render('login', { err: req.query.result })
 })
 
+// 로그인 처리
 router.post('/login', function (req, res, next) {
   passport.authenticate('local', function (err, user, info) {
     if (err) { return next(err) }
@@ -206,15 +211,18 @@ router.post('/login', function (req, res, next) {
   })(req, res, next)
 })
 
+// 로그아웃 처리
 router.get('/logout', function (req, res) {
   req.logout()
   res.redirect('/')
 })
 
+// 핑 테스트
 router.get('/ping', function (req, res) {
   res.status(200).send('pong!')
 })
 
+// 댓글 처리
 router.post('/createComment', async function (req, res) {
   try {
     if (req.user === undefined) {
@@ -229,6 +237,15 @@ router.post('/createComment', async function (req, res) {
       await result.save()
       res.redirect(req.header('Referer'))
     }
+  } catch (error) {
+    console.log(error)
+  }
+})
+
+// 프로필 화면
+router.get('/profile', async function (req, res) {
+  try {
+    res.render('profile')
   } catch (error) {
     console.log(error)
   }
