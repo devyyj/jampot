@@ -4,6 +4,7 @@ const mongoosePaginate = require('mongoose-paginate-v2')
 
 mai.initialize(mongoose.connection)
 
+// 필드 이름 규칙을 통일할 필요가 있음
 const schema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'user' },
   title: String,

@@ -34,18 +34,26 @@ router.get('/', async function (req, res, next) {
   }
 })
 
+// 연속 게시글 작성 불가 기능
+async function preventCreatePost (username) {
+  const prev = await Board.findOne({}).sort({ _id: -1 }).populate('user')
+  if (prev && prev.user.username === username) {
+    const result = await User.findOne({ username: username })
+    const calc = 60000 - (Date.now() - result.lastpost.getTime())
+    if (calc > 0) return moment.duration(calc)
+  }
+  return undefined
+}
+
 // 새글 작성 화면
 router.get('/createPost', async function (req, res) {
   if (req.user === undefined) {
     res.redirect('/login')
   } else {
-    // 연속 게시글 불가 기능
-    const prev = await Board.findOne({}).sort({ _id: -1 })
-    if (prev) {
-      if (prev.user === req.user.username) return res.render('warning', { message: '연속으로 글을 작성할 수 없습니다.' })
-    }
-    res.render('createPost', { data: {} })
+    const countDown = await preventCreatePost(req.user.username)
+    if (countDown) return res.render('warning', { user: req.user, message: '연속으로 글을 작성할 수 없습니다.', countDown })
   }
+  res.render('createPost', { user: req.user, data: {} })
 })
 
 // 새글 생성과 수정을 함께 처리
@@ -66,15 +74,16 @@ router.post('/createPost', upload.single('uploadFile'), async function (req, res
       res.redirect('/readPost?postNumber=' + req.query.postNumber)
       // 새글 업로드
     } else {
-      // 연속 게시글 불가 기능
-      const prev = await Board.findOne({}).sort({ _id: -1 })
-      if (prev) {
-        if (prev.user === req.user.username) return res.render('warning', { message: '연속으로 글을 작성할 수 없습니다.' })
-      }
+      const countDown = await preventCreatePost(req.user.username)
+      if (countDown) return res.render('warning', { user: req.user, message: '연속으로 글을 작성할 수 없습니다.', countDown })
       // 첨부 파일 저장
       if (req.file) uploadFileURL = await uploadFile(req.file.originalname, req.file.filename, req.file.path)
       // 게시글 저장
       const user = await User.findOne({ username: req.user.username })
+      // 게시글 작성 시간 저장
+      user.lastpost = Date.now()
+      await user.save()
+
       // eslint-disable-next-line prefer-const
       let doc = {
         user: user._id,
@@ -114,14 +123,14 @@ router.get('/updatePost', async function (req, res) {
     } else {
       const result = await Board.findOne({ postNumber: req.query.postNumber }).populate('user')
       if (result.user.nickname !== req.user.nickname) {
-        res.render('warning', {message: '권한이 없읍니다.'})
+        res.render('warning', { user: req.user, message: '권한이 없읍니다.' })
       } else {
-        res.render('createPost', { data: result })
+        res.render('createPost', { user: req.user, data: result })
       }
     }
   } catch (error) {
     console.log(error)
-  }  
+  }
 })
 
 // 게시글 삭제 처리
@@ -132,7 +141,7 @@ router.get('/deletePost', async function (req, res) {
     } else {
       const result = await Board.findOne({ postNumber: req.query.postNumber }).populate('user')
       if (result.user.nickname !== req.user.nickname) {
-        res.render('warning', {message: '권한이 없읍니다.'})
+        res.render('warning', { user: req.user, message: '권한이 없읍니다.' })
       } else {
         result.delete({ postNumber: req.query.postNumber })
         res.redirect('/')
@@ -170,14 +179,14 @@ router.get('/likePost', async function (req, res) {
 
 // User 생성, 유저 생성, 회원 가입
 router.get('/register', function (req, res) {
-  res.render('register', {})
+  res.render('register', { user: req.user })
 })
 
 router.post('/register', function (req, res) {
   User.register(new User({ username: req.body.username, nickname: req.body.nickname }),
     req.body.password, function (err, User) {
       if (err) {
-        return res.render('register', { err: err })
+        return res.render('register', { user: req.user, err: err })
       }
       passport.authenticate('local')(req, res, function () {
         res.redirect('/')
@@ -194,7 +203,7 @@ router.get('/login', function (req, res) {
       req.session.backURL = parseURL.href
     }
   }
-  res.render('login', { err: req.query.result })
+  res.render('login', { user: req.user, err: req.query.result })
 })
 
 // 로그인 처리
@@ -245,7 +254,7 @@ router.post('/createComment', async function (req, res) {
 // 프로필 화면
 router.get('/profile', async function (req, res) {
   try {
-    res.render('profile')
+    res.render('profile', { user: req.user })
   } catch (error) {
     console.log(error)
   }
