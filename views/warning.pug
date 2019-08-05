@@ -2,5 +2,6 @@ extends layout
 
 block content
   p #{message}
-  p 남은 시간 : #{countDown.minutes()}분 #{countDown.seconds()}초
+  if (countDown)
+    p 남은 시간 : #{countDown.minutes()}분 #{countDown.seconds()}초
   button(type="button", onclick="location.href='javascript:history.back()'") 뒤로가기

@@ -31,6 +31,7 @@ router.get('/', async function (req, res, next) {
     res.render('index', { data: result, user: req.user, moment: moment })
   } catch (error) {
     console.log(error)
+    req.render('warning', { message: '알 수 없는 오류가 발생했습니다.' })
   }
 })
 
@@ -97,6 +98,7 @@ router.post('/createPost', upload.single('uploadFile'), async function (req, res
     }
   } catch (error) {
     console.log(error)
+    req.render('warning', { message: '알 수 없는 오류가 발생했습니다.' })
   }
 })
 
@@ -112,6 +114,7 @@ router.get('/readPost', async function (req, res) {
     res.render('readPost', { data: result, moment: moment, user: req.user, next: next, prev: prev })
   } catch (error) {
     console.log(error)
+    req.render('warning', { message: '알 수 없는 오류가 발생했습니다.' })
   }
 })
 
@@ -130,6 +133,7 @@ router.get('/updatePost', async function (req, res) {
     }
   } catch (error) {
     console.log(error)
+    req.render('warning', { message: '알 수 없는 오류가 발생했습니다.' })
   }
 })
 
@@ -149,6 +153,7 @@ router.get('/deletePost', async function (req, res) {
     }
   } catch (error) {
     console.log(error)
+    req.render('warning', { message: '알 수 없는 오류가 발생했습니다.' })
   }
 })
 
@@ -248,15 +253,41 @@ router.post('/createComment', async function (req, res) {
     }
   } catch (error) {
     console.log(error)
+    req.render('warning', { message: '알 수 없는 오류가 발생했습니다.' })
   }
 })
 
 // 프로필 화면
 router.get('/profile', async function (req, res) {
   try {
-    res.render('profile', { user: req.user })
+    if (req.user === undefined) {
+      res.redirect('/login')
+    } else {
+      const result = await User.findOne({ username: req.user.username })
+      res.render('profile', { user: req.user, data: result })
+    }
   } catch (error) {
     console.log(error)
+    req.render('warning', { message: '알 수 없는 오류가 발생했습니다.' })
+  }
+})
+
+// 프로필 재설정
+router.post('/profile', async function (req, res) {
+  try {
+    const result = await User.findOne({ username: req.user.username })
+    const authResult = await result.authenticate(req.body.oldpassword)
+    if (authResult.error) res.render('warning', { user: req.user, message: '비밀번호가 일치하지 않습니다.' })
+    else {
+      result.nickname = req.body.nickname
+      if (req.body.newpassword) await result.changePassword(req.body.oldpassword, req.body.newpassword)
+      await result.save()
+      res.redirect('/')
+    }
+  } catch (error) {
+    console.log(error)
+    if (error.code === 11000) res.render('warning', { user: req.user, message: '중복되는 닉네임 입니다.' })
+    else req.render('warning', { message: '알 수 없는 오류가 발생했습니다.' })
   }
 })
 
