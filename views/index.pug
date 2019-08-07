@@ -12,11 +12,11 @@ block content
       each val in data.docs
         tr(onclick='tableRow('+ val.postNumber + ')' style="cursor: pointer;")
           //- 썸네일
-          th.align-middle.text-center(style="width: 59px")
+          th.align-middle.text-center(style="width: 60px")
             if(val.uploadFiles[0])
               .text-center
               if(val.uploadFiles[0].video)
-                video(width="50" height="50")
+                video(width="50" height="50" loop autoplay playsinline webkit-playsinline)
                   source(src=val.uploadFiles[0].resizeFileURL, type="video/mp4")
                   |Your browser does not support the video tag.
               else
