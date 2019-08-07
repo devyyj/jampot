@@ -43,7 +43,12 @@ block content
   div(style="white-space: pre-wrap;")
     if(data.uploadFiles[0])
       .text-center
-        img.border(style="max-width:100%;" id='img' src=data.uploadFiles[0] alt="" )
+        if(data.uploadFiles[0].video)
+          video(width="100%" loop controls)
+            source(src=data.uploadFiles[0].resizeFileURL, type="video/mp4")
+            |Your browser does not support the video tag.
+        else
+          img.border(style="max-width:100%;" id='img' src=data.uploadFiles[0].resizeFileURL alt="" )
     |#{data.content}
   hr.row
   //- 이전글/다음글

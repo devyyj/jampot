@@ -13,7 +13,8 @@ const schema = new mongoose.Schema({
   like: { type: Number, default: 0 },
   disLike: { type: Number, default: 0 },
   voteList: [String],
-  uploadFiles: [String],
+  // uploadFiles: [String],
+  uploadFiles: [{ originalFileURL: String, resizeFileURL: String, video: Boolean }],
   comments: [{
     comment: String,
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'user' },

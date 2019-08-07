@@ -4,7 +4,7 @@ const router = express.Router()
 const Board = require('../models/board')
 const User = require('../models/user')
 const url = require('url')
-const uploadFile = require('../common/aws-s3')
+const { uploadFile, deleteFile } = require('../common/aws-s3')
 
 const multer = require('multer')
 const upload = multer({ dest: 'uploads/' })
@@ -31,7 +31,7 @@ router.get('/', async function (req, res, next) {
     res.render('index', { data: result, user: req.user, moment: moment })
   } catch (error) {
     console.log(error)
-    req.render('warning', { message: '알 수 없는 오류가 발생했습니다.' })
+    next({ message: '알 수 없는 오류가 발생했습니다.' })
   }
 })
 
@@ -57,53 +57,74 @@ router.get('/createPost', async function (req, res) {
   res.render('createPost', { user: req.user, data: {} })
 })
 
+// 첨부파일 업로드 후 DB 설정값 생성
+async function setUploadFile (req, doc) {
+  if (req.file) {
+    const result = await uploadFile(req.file.originalname, req.file.filename, req.file.path)
+    const uploadFileURL = {
+      originalFileURL: result.originalFileURL,
+      resizeFileURL: result.resizeFileURL,
+      video: result.video
+    }
+    doc.uploadFiles = [uploadFileURL]
+  }
+}
+
 // 새글 생성과 수정을 함께 처리
-router.post('/createPost', upload.single('uploadFile'), async function (req, res) {
+router.post('/createPost', upload.single('uploadFile'), async function (req, res, next) {
   try {
-    // 게시글 업데이트
-    let uploadFileURL
     if (req.query.postNumber !== 'undefined') {
-      // 첨부 파일 수정
-      if (req.file) uploadFileURL = await uploadFile(req.file.originalname, req.file.filename, req.file.path)
+      // 게시글 업데이트
       // eslint-disable-next-line prefer-const
       let doc = {
         title: req.body.title,
         content: req.body.content
       }
-      if (uploadFileURL) doc.uploadFiles = [uploadFileURL]
-      await Board.updateOne({ postNumber: req.query.postNumber }, doc)
+      // 새로운 첨부파일 업로드
+      await setUploadFile(req, doc)
+      // 기존의 첨부 파일 삭제
+      const result = await Board.findOne({ postNumber: req.query.postNumber })
+      if (result.uploadFiles.length) {
+        const originalFileURL = new url.URL(result.uploadFiles[0].originalFileURL)
+        const resizeFileURL = new url.URL(result.uploadFiles[0].resizeFileURL)
+        await deleteFile(originalFileURL.pathname.slice(1))
+        await deleteFile(resizeFileURL.pathname.slice(1))
+      }
+      result.title = doc.title
+      result.content = doc.content
+      if (doc.uploadFiles) result.uploadFiles = doc.uploadFiles
+
+      await result.save()
       res.redirect('/readPost?postNumber=' + req.query.postNumber)
-      // 새글 업로드
     } else {
+      // 새글 업로드
       const countDown = await preventCreatePost(req.user.username)
       if (countDown) return res.render('warning', { user: req.user, message: '연속으로 글을 작성할 수 없습니다.', countDown })
-      // 첨부 파일 저장
-      if (req.file) uploadFileURL = await uploadFile(req.file.originalname, req.file.filename, req.file.path)
       // 게시글 저장
       const user = await User.findOne({ username: req.user.username })
       // 게시글 작성 시간 저장
       user.lastpost = Date.now()
       await user.save()
-
       // eslint-disable-next-line prefer-const
       let doc = {
         user: user._id,
         title: req.body.title,
         content: req.body.content
       }
-      if (uploadFileURL) doc.uploadFiles = [uploadFileURL]
+      // 첨부 파일 저장
+      await setUploadFile(req, doc)
       const post = new Board(doc)
       const result = await post.save()
       res.redirect('/readPost?postNumber=' + result.postNumber)
     }
   } catch (error) {
     console.log(error)
-    req.render('warning', { message: '알 수 없는 오류가 발생했습니다.' })
+    next({ message: '알 수 없는 오류가 발생했습니다.' })
   }
 })
 
 // 게시글 읽기 화면
-router.get('/readPost', async function (req, res) {
+router.get('/readPost', async function (req, res, next) {
   try {
     await Board.updateOne({ postNumber: req.query.postNumber }, { $inc: { hits: 1 } })
     const result = await Board.findOne({ postNumber: req.query.postNumber })
@@ -114,12 +135,12 @@ router.get('/readPost', async function (req, res) {
     res.render('readPost', { data: result, moment: moment, user: req.user, next: next, prev: prev })
   } catch (error) {
     console.log(error)
-    req.render('warning', { message: '알 수 없는 오류가 발생했습니다.' })
+    next({ message: '알 수 없는 오류가 발생했습니다.' })
   }
 })
 
 // 게시글 수정 처리
-router.get('/updatePost', async function (req, res) {
+router.get('/updatePost', async function (req, res, next) {
   try {
     if (req.user === undefined) {
       res.redirect('/login')
@@ -133,17 +154,24 @@ router.get('/updatePost', async function (req, res) {
     }
   } catch (error) {
     console.log(error)
-    req.render('warning', { message: '알 수 없는 오류가 발생했습니다.' })
+    next({ message: '알 수 없는 오류가 발생했습니다.' })
   }
 })
 
 // 게시글 삭제 처리
-router.get('/deletePost', async function (req, res) {
+router.get('/deletePost', async function (req, res, next) {
   try {
     if (req.user === undefined) {
       res.redirect('/login')
     } else {
       const result = await Board.findOne({ postNumber: req.query.postNumber }).populate('user')
+      // 첨부 파일 삭제
+      if (result.uploadFiles.length) {
+        const originalFileURL = new url.URL(result.uploadFiles[0].originalFileURL)
+        const resizeFileURL = new url.URL(result.uploadFiles[0].resizeFileURL)
+        await deleteFile(originalFileURL.pathname.slice(1))
+        await deleteFile(resizeFileURL.pathname.slice(1))
+      }
       if (result.user.nickname !== req.user.nickname) {
         res.render('warning', { user: req.user, message: '권한이 없읍니다.' })
       } else {
@@ -153,7 +181,7 @@ router.get('/deletePost', async function (req, res) {
     }
   } catch (error) {
     console.log(error)
-    req.render('warning', { message: '알 수 없는 오류가 발생했습니다.' })
+    next({ message: '알 수 없는 오류가 발생했습니다.' })
   }
 })
 
@@ -237,7 +265,7 @@ router.get('/ping', function (req, res) {
 })
 
 // 댓글 처리
-router.post('/createComment', async function (req, res) {
+router.post('/createComment', async function (req, res, next) {
   try {
     if (req.user === undefined) {
       res.redirect('/login')
@@ -253,12 +281,12 @@ router.post('/createComment', async function (req, res) {
     }
   } catch (error) {
     console.log(error)
-    req.render('warning', { message: '알 수 없는 오류가 발생했습니다.' })
+    next({ message: '알 수 없는 오류가 발생했습니다.' })
   }
 })
 
 // 프로필 화면
-router.get('/profile', async function (req, res) {
+router.get('/profile', async function (req, res, next) {
   try {
     if (req.user === undefined) {
       res.redirect('/login')
@@ -268,12 +296,12 @@ router.get('/profile', async function (req, res) {
     }
   } catch (error) {
     console.log(error)
-    req.render('warning', { message: '알 수 없는 오류가 발생했습니다.' })
+    next({ message: '알 수 없는 오류가 발생했습니다.' })
   }
 })
 
 // 프로필 재설정
-router.post('/profile', async function (req, res) {
+router.post('/profile', async function (req, res, next) {
   try {
     const result = await User.findOne({ username: req.user.username })
     const authResult = await result.authenticate(req.body.oldpassword)
@@ -286,8 +314,8 @@ router.post('/profile', async function (req, res) {
     }
   } catch (error) {
     console.log(error)
-    if (error.code === 11000) res.render('warning', { user: req.user, message: '중복되는 닉네임 입니다.' })
-    else req.render('warning', { message: '알 수 없는 오류가 발생했습니다.' })
+    if (error.code === 11000) next({ message: '중복 되는 닉네임 입니다.' })
+    else next({ message: '알 수 없는 오류가 발생했습니다.' })
   }
 })
 

@@ -11,10 +11,16 @@ block content
     tbody
       each val in data.docs
         tr(onclick='tableRow('+ val.postNumber + ')' style="cursor: pointer;")
+          //- 썸네일
           th.align-middle.text-center(style="width: 59px")
             if(val.uploadFiles[0])
               .text-center
-                img.border(style="width:50px; height: 50px;" id='img' src=val.uploadFiles[0] alt="" )
+              if(val.uploadFiles[0].video)
+                video(width="50" height="50")
+                  source(src=val.uploadFiles[0].resizeFileURL, type="video/mp4")
+                  |Your browser does not support the video tag.
+              else
+                img.border(style="width:50px; height: 50px;" id='img' src=val.uploadFiles[0].resizeFileURL alt="" )
             else
               =val.postNumber
           td

@@ -13,40 +13,72 @@ AWS.config.update({
 })
 
 const s3 = new AWS.S3()
+const bucketName = 'free-board-image'
 
-async function uploadFile (OriginalName, fileName, filePath) {
+async function uploadS3 (fileName, filePath) {
   try {
-    const extname = path.extname(OriginalName)
-    const newFilePath = 'uploads/' + fileName + '_resize'
-
     var fileStream = fs.createReadStream(filePath)
     fileStream.on('error', function (err) {
       console.log('File Error', err)
     })
     const uploadParams = {
-      Bucket: 'free-board-image',
+      Bucket: bucketName,
       Body: fileStream,
-      Key: fileName + extname
+      Key: fileName
     }
-    // 업로드
+    // s3 업로드
     const result = await s3.upload(uploadParams).promise()
-
-    // gif to mp4
-    if (extname === '.gif') {
-      const { stdout, stderr } = await exec('dir')
-      console.log(stdout, stderr)
-      // 리사이징
-    } else {
-      const image = await jimp.read(filePath)
-      const resize = await image.resize(400, jimp.AUTO).write(newFilePath + extname)
-    }
-
-    // 삭제
-    // fs.unlinkSync(filePath)
     return result.Location
   } catch (error) {
     console.log(error)
   }
 }
 
-module.exports = uploadFile
+async function uploadFile (OriginalName, fileName, filePath) {
+  try {
+    const prePath = 'uploads/'
+    const extname = path.extname(OriginalName)
+    const result = {}
+    let resizeFileName
+    let resizeFilePath
+    let video = false
+    // gif to mp4
+    if (extname === '.gif') {
+      resizeFileName = fileName + '.mp4'
+      resizeFilePath = prePath + resizeFileName
+      await exec(`ffmpeg.exe -i ${filePath} -pix_fmt yuv420p -c:v libx264 -movflags +faststart -filter:v crop='floor(in_w/2)*2:floor(in_h/2)*2' ${resizeFilePath}`)
+      video = true
+      // image resize
+    } else {
+      resizeFileName = fileName + '_resize' + extname
+      resizeFilePath = prePath + resizeFileName
+      const image = await jimp.read(filePath)
+      if (image.bitmap.width <= 400) await image.resize(image.bitmap.width, jimp.AUTO).write(resizeFilePath)
+    }
+    // 이미지 업로드
+    result.originalFileURL = await uploadS3(fileName + extname, filePath)
+    result.resizeFileURL = await uploadS3(resizeFileName, resizeFilePath)
+    result.video = video
+    // 삭제
+    fs.unlinkSync(filePath)
+    fs.unlinkSync(resizeFilePath)
+
+    return result
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+async function deleteFile (fileName) {
+  try {
+    const params = {
+      Bucket: bucketName,
+      Key: fileName
+    }
+    await s3.deleteObject(params).promise()
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+module.exports = { uploadFile, deleteFile }
