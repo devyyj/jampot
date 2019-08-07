@@ -44,7 +44,7 @@ block content
     if(data.uploadFiles[0])
       .text-center
         if(data.uploadFiles[0].video)
-          video(max-width="100%;" loop controls)
+          video(style="max-width: 100%;" loop controls autoplay)
             source(src=data.uploadFiles[0].resizeFileURL, type="video/mp4")
             |Your browser does not support the video tag.
         else
