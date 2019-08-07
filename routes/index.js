@@ -84,7 +84,7 @@ router.post('/createPost', upload.single('uploadFile'), async function (req, res
       await setUploadFile(req, doc)
       // 기존의 첨부 파일 삭제
       const result = await Board.findOne({ postNumber: req.query.postNumber })
-      if (result.uploadFiles.length) {
+      if (result.uploadFiles.length && doc.uploadFiles) {
         const originalFileURL = new url.URL(result.uploadFiles[0].originalFileURL)
         const resizeFileURL = new url.URL(result.uploadFiles[0].resizeFileURL)
         await deleteFile(originalFileURL.pathname.slice(1))

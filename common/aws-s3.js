@@ -9,7 +9,7 @@ const exec = util.promisify(require('child_process').exec)
 
 AWS.config.update({
   region: 'ap-northeast-2'
-  , httpOptions: { agent: proxy('http://210.112.194.110:3128') }
+  // , httpOptions: { agent: proxy('http://210.112.194.110:3128') }
 })
 
 const s3 = new AWS.S3()
@@ -46,7 +46,7 @@ async function uploadFile (OriginalName, fileName, filePath) {
     if (extname === '.gif') {
       resizeFileName = fileName + '.mp4'
       resizeFilePath = prePath + resizeFileName
-      await exec(`ffmpeg.exe -i ${filePath} -pix_fmt yuv420p -c:v libx264 -movflags +faststart -filter:v crop='floor(in_w/2)*2:floor(in_h/2)*2' ${resizeFilePath}`)
+      await exec(`ffmpeg -i ${filePath} -pix_fmt yuv420p -c:v libx264 -movflags +faststart -filter:v crop='floor(in_w/2)*2:floor(in_h/2)*2' ${resizeFilePath}`)
       video = true
       // image resize
     } else {
@@ -54,6 +54,7 @@ async function uploadFile (OriginalName, fileName, filePath) {
       resizeFilePath = prePath + resizeFileName
       const image = await jimp.read(filePath)
       if (image.bitmap.width <= 400) await image.resize(image.bitmap.width, jimp.AUTO).write(resizeFilePath)
+      else await image.resize(400, jimp.AUTO).write(resizeFilePath)
     }
     // 이미지 업로드
     result.originalFileURL = await uploadS3(fileName + extname, filePath)
