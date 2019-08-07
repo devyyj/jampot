@@ -15,10 +15,17 @@ const schema = new mongoose.Schema({
   voteList: [String],
   // uploadFiles: [String],
   uploadFiles: [{ originalFileURL: String, resizeFileURL: String, video: Boolean }],
+  // 댓글
   comments: [{
     comment: String,
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'user' },
-    createTime: { type: Date, default: Date.now }
+    createTime: { type: Date, default: Date.now },
+    // 댓댓글
+    comments: [{
+      comment: String,
+      user: { type: mongoose.Schema.Types.ObjectId, ref: 'user' },
+      createTime: { type: Date, default: Date.now }
+    }]
   }],
   createTime: { type: Date, default: Date.now },
   updateTime: { type: Date, default: Date.now }
