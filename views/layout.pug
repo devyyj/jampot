@@ -2,6 +2,9 @@ block variables
 doctype html
 html
   head
+    //- favicon
+    link(rel="shortcut icon", href="favicon.ico", type="image/x-icon")
+
     title= title
     meta(charset="UTF-8")
     meta(name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no")
@@ -11,8 +14,11 @@ html
     <link href="https://fonts.googleapis.com/css?family=Nanum+Gothic+Coding&display=swap" rel="stylesheet">
   body
     .container
-      nav.navbar.navbar-expand-lg.navbar-light.bg-white.row.mb-3
-        a.navbar-brand.text-primary(href="/") 잼팟
+      nav.navbar.navbar-expand-lg.navbar-light.bg-white.row.mb-3        
+        a.navbar-brand.text-primary(href="/")
+          img(style="width:25px; height:25px;" src="jampot.png", alt="")
+          =' '
+          |잼팟
         button.navbar-toggler(type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation")
           span.navbar-toggler-icon
         .collapse.navbar-collapse(id="navbarNavAltMarkup")
