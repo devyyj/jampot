@@ -9,7 +9,7 @@ const exec = util.promisify(require('child_process').exec)
 
 AWS.config.update({
   region: 'ap-northeast-2'
-  // , httpOptions: { agent: proxy('http://210.112.194.110:3128') }
+  , httpOptions: { agent: proxy('http://210.112.194.110:3128') }
 })
 
 const s3 = new AWS.S3()
@@ -53,8 +53,8 @@ async function uploadFile (OriginalName, fileName, filePath) {
       resizeFileName = fileName + '_resize' + extname
       resizeFilePath = prePath + resizeFileName
       const image = await jimp.read(filePath)
-      if (image.bitmap.width <= 400) await image.resize(image.bitmap.width, jimp.AUTO).write(resizeFilePath)
-      else await image.resize(400, jimp.AUTO).write(resizeFilePath)
+      if (image.bitmap.width <= 400) await exec(`ffmpeg -i ${filePath} -vf scale=${image.bitmap.width}:-1 ${resizeFilePath}`)
+      else await await exec(`ffmpeg -i ${filePath} -vf scale=400:-1 ${resizeFilePath}`)
     }
     // 이미지 업로드
     result.originalFileURL = await uploadS3(fileName + extname, filePath)
