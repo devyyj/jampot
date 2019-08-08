@@ -64,11 +64,22 @@ async function setUploadFile (req, doc) {
     const uploadFileURL = {
       originalFileURL: result.originalFileURL,
       resizeFileURL: result.resizeFileURL,
+      originalFileSize: req.file.size,
       video: result.video,
-      originalFileSize: req.file.size
+      thumbnailURL: result.thumbnailURL
     }
     doc.uploadFiles = [uploadFileURL]
   }
+}
+
+// 기존 첨부파일 삭제 처리
+async function resetUploadFile (result) {
+  const originalFileURL = new url.URL(result.uploadFiles[0].originalFileURL)
+  const resizeFileURL = new url.URL(result.uploadFiles[0].resizeFileURL)
+  await deleteFile(originalFileURL.pathname.slice(1))
+  await deleteFile(resizeFileURL.pathname.slice(1))
+  const thumbnailURL = new url.URL(result.uploadFiles[0].thumbnailURL)
+  await deleteFile(thumbnailURL.pathname.slice(1))
 }
 
 // 새글 생성과 수정을 함께 처리
@@ -85,12 +96,8 @@ router.post('/createPost', upload.single('uploadFile'), async function (req, res
       await setUploadFile(req, doc)
       // 기존의 첨부 파일 삭제
       const result = await Board.findOne({ postNumber: req.query.postNumber })
-      if (result.uploadFiles.length && doc.uploadFiles) {
-        const originalFileURL = new url.URL(result.uploadFiles[0].originalFileURL)
-        const resizeFileURL = new url.URL(result.uploadFiles[0].resizeFileURL)
-        await deleteFile(originalFileURL.pathname.slice(1))
-        await deleteFile(resizeFileURL.pathname.slice(1))
-      }
+      if (result.uploadFiles.length && doc.uploadFiles) await resetUploadFile(result)
+      // 업데이트 내용 설정
       result.title = doc.title
       result.content = doc.content
       if (doc.uploadFiles) result.uploadFiles = doc.uploadFiles
@@ -167,12 +174,8 @@ router.get('/deletePost', async function (req, res, next) {
     } else {
       const result = await Board.findOne({ postNumber: req.query.postNumber }).populate('user')
       // 첨부 파일 삭제
-      if (result.uploadFiles.length) {
-        const originalFileURL = new url.URL(result.uploadFiles[0].originalFileURL)
-        const resizeFileURL = new url.URL(result.uploadFiles[0].resizeFileURL)
-        await deleteFile(originalFileURL.pathname.slice(1))
-        await deleteFile(resizeFileURL.pathname.slice(1))
-      }
+      await resetUploadFile(result)
+
       if (result.user.nickname !== req.user.nickname) {
         res.render('warning', { user: req.user, message: '권한이 없읍니다.' })
       } else {

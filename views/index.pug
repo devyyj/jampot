@@ -15,12 +15,7 @@ block content
           th.align-middle.text-center(style="width: 60px")
             if(val.uploadFiles[0])
               .text-center
-              if(val.uploadFiles[0].video)
-                video(width="50" height="50" loop autoplay playsinline webkit-playsinline)
-                  source(src=val.uploadFiles[0].resizeFileURL, type="video/mp4")
-                  |Your browser does not support the video tag.
-              else
-                img.border(style="width:50px; height: 50px;" src=val.uploadFiles[0].resizeFileURL alt="" )
+              img.border(style="width:50px; height: 50px;" src=val.uploadFiles[0].thumbnailURL alt="" )
             else
               =val.postNumber
           td

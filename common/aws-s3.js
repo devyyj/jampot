@@ -41,13 +41,15 @@ async function uploadFile (OriginalName, fileName, filePath) {
     const result = {}
     let resizeFileName
     let resizeFilePath
+    const thumbnailName = fileName + '_thumbnail.jpg'
+    const thumbnailPath = prePath + thumbnailName
     let video = false
     // gif to mp4
     if (extname === '.gif') {
+      video = true
       resizeFileName = fileName + '.mp4'
       resizeFilePath = prePath + resizeFileName
       await exec(`ffmpeg -i ${filePath} -pix_fmt yuv420p -c:v libx264 -movflags +faststart -filter:v crop='floor(in_w/2)*2:floor(in_h/2)*2' ${resizeFilePath}`)
-      video = true
       // image resize
     } else {
       resizeFileName = fileName + '_resize' + extname
@@ -56,11 +58,15 @@ async function uploadFile (OriginalName, fileName, filePath) {
       if (image.bitmap.width <= 400) await exec(`ffmpeg -i ${filePath} -vf scale=${image.bitmap.width}:-1 ${resizeFilePath}`)
       else await await exec(`ffmpeg -i ${filePath} -vf scale=400:-1 ${resizeFilePath}`)
     }
+    // 썸네일 생성
+    await exec(`ffmpeg -i ${filePath} -vf scale=50:50 -vframes 1 ${thumbnailPath}`)
     // 이미지 업로드
     result.originalFileURL = await uploadS3(fileName + extname, filePath)
     result.resizeFileURL = await uploadS3(resizeFileName, resizeFilePath)
+    result.thumbnailURL = await uploadS3(thumbnailName, thumbnailPath)
     result.video = video
     // 삭제
+    fs.unlinkSync(thumbnailPath)
     fs.unlinkSync(filePath)
     fs.unlinkSync(resizeFilePath)
 

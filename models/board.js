@@ -17,9 +17,10 @@ const schema = new mongoose.Schema({
   uploadFiles: [{
     originalFileURL: String,
     resizeFileURL: String,
-    video: Boolean,
     originalFileSize: Number,
-    resizeFileSize: Number
+    resizeFileSize: Number,
+    video: Boolean,
+    thumbnailURL: String
   }],
   // 댓글
   comments: [{
