@@ -5,8 +5,8 @@ document.getElementById('customFile').addEventListener('change', function (event
     el.innerHTML = '사진만 가능합니다.'
     el.classList.add('text-danger')
     this.value = ''
-  } else if (this.files[0].size > 10485760) {
-    el.innerHTML = '10MB 이하 사진만 가능합니다.'
+  } else if (this.files[0].size > 18874368) {
+    el.innerHTML = '18MB 이하 사진만 가능합니다.'
     el.classList.add('text-danger')
     this.value = ''
   } else {

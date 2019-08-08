@@ -41,14 +41,19 @@ block content
   hr.row
   //- 게시글 내용
   div(style="white-space: pre-wrap;")
+    //- 첨부파일
     if(data.uploadFiles[0])
-      .text-center
+      .text-center(id="file")
         if(data.uploadFiles[0].video)
-          video(style="max-width: 100%;" loop controls autoplay playsinline webkit-playsinline)
+          video(id="resize" style="max-width: 100%;" loop controls autoplay playsinline webkit-playsinline)
             source(src=data.uploadFiles[0].resizeFileURL, type="video/mp4")
             |Your browser does not support the video tag.
         else
-          img.border(style="max-width:100%;" id='img' src=data.uploadFiles[0].resizeFileURL alt="" )
+          img.border(id="resize" style="max-width:100%;" src=data.uploadFiles[0].resizeFileURL alt="" )
+        br
+        button.btn.btn-outline-secondary.btn-sm(type="button" id="original"
+          value=data.uploadFiles[0].originalFileURL data-size=data.uploadFiles[0].originalFileSize)
+    //- 본문
     |#{data.content}
   hr.row
   //- 이전글/다음글
@@ -136,3 +141,4 @@ block content
               button.btn.btn-danger(type="button" onclick="location.href='/deletePost?postNumber=" + data.postNumber + "'") 삭제  
   //- 로그인 모달 포함
   include askLogin.pug
+  script(src="javascripts/readPost.js")

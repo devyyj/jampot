@@ -64,7 +64,8 @@ async function setUploadFile (req, doc) {
     const uploadFileURL = {
       originalFileURL: result.originalFileURL,
       resizeFileURL: result.resizeFileURL,
-      video: result.video
+      video: result.video,
+      originalFileSize: req.file.size
     }
     doc.uploadFiles = [uploadFileURL]
   }

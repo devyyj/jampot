@@ -14,7 +14,13 @@ const schema = new mongoose.Schema({
   disLike: { type: Number, default: 0 },
   voteList: [String],
   // uploadFiles: [String],
-  uploadFiles: [{ originalFileURL: String, resizeFileURL: String, video: Boolean }],
+  uploadFiles: [{
+    originalFileURL: String,
+    resizeFileURL: String,
+    video: Boolean,
+    originalFileSize: Number,
+    resizeFileSize: Number
+  }],
   // 댓글
   comments: [{
     comment: String,
