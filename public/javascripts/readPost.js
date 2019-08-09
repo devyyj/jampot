@@ -25,3 +25,47 @@ if (showOrgEl) {
     this.remove()
   })
 }
+
+// 댓글 삭제
+const deleteComment = document.getElementsByClassName('deleteComment')
+Array.from(deleteComment).forEach(function (el) {
+  el.addEventListener('click', function () {
+    if (confirm('리얼루다가 댓글을 삭제하시겠읍니까?')) {
+      const postNumber = this.getAttribute('data-postNumber')
+      const commentID = this.getAttribute('data-commentID')
+      const xhttp = new XMLHttpRequest()
+      xhttp.onreadystatechange = function () {
+        if (this.readyState === 4 && this.status === 200) {
+          console.log(this.response)
+          if (this.response.writeErrors) alert('댓글 삭제에 실패했습니다.')
+          else el.parentElement.parentElement.parentElement.remove()
+        }
+      }
+      const url = '/deleteComment?postNumber=' + postNumber + '&commentID=' + commentID
+      xhttp.open('DELETE', url, true)
+      xhttp.send()
+    }
+  })
+})
+
+// 댓글 수정
+const updateComment = document.getElementsByClassName('updateComment')
+Array.from(updateComment).forEach(function (el) {
+  el.addEventListener('click', function () {
+    const postNumber = this.getAttribute('data-postNumber')
+    const commentID = this.getAttribute('data-commentID')
+    const xhttp = new XMLHttpRequest()
+    xhttp.onreadystatechange = function () {
+      if (this.readyState === 4 && this.status === 200) {
+        console.log(this.response)
+        // if (this.response.writeErrors) alert('댓글 삭제에 실패했습니다.')
+        // else el.parentElement.parentElement.parentElement.remove()
+      }
+    }
+    const url = '/updateComment?postNumber=' + postNumber + '&commentID=' + commentID + '&comment=댓글수정테스트'
+    xhttp.open('PUT', url, true)
+    xhttp.send()
+  })
+})
+
+// 댓댓글

@@ -268,7 +268,7 @@ router.get('/ping', function (req, res) {
   res.status(200).send('pong!')
 })
 
-// 댓글 처리
+// 댓글 생성
 router.post('/createComment', async function (req, res, next) {
   try {
     if (req.user === undefined) {
@@ -288,6 +288,43 @@ router.post('/createComment', async function (req, res, next) {
     next({ message: '알 수 없는 오류가 발생했습니다.' })
   }
 })
+
+// 댓글 삭제
+router.delete('/deleteComment', async function (req, res, next) {
+  try {
+    if (req.user === undefined) req.redirect('/login')
+    else {
+      const result = await Board.updateOne(
+        { postNumber: req.query.postNumber },
+        { $pull: { comments: { _id: req.query.commentID } } }
+      )
+      res.send(result)
+    }
+  } catch (error) {
+    console.log(error)
+    next({ message: '알 수 없는 오류가 발생했습니다.' })
+  }
+})
+
+// 댓글 수정
+router.put('/updateComment', async function (req, res, next) {
+  try {
+    if (req.user === undefined) req.redirect('/login')
+    else {
+      const result = await Board.updateOne(
+        // { $elemMatch: { _id: req.query.commentID } } 이렇게도 가능
+        { postNumber: req.query.postNumber, 'comments._id': req.query.commentID },
+        { $set: { 'comments.$.comment': req.query.comment } }
+      )
+      res.send(result)
+    }
+  } catch (error) {
+    console.log(error)
+    next({ message: '알 수 없는 오류가 발생했습니다.' })
+  }
+})
+
+// 댓댓글
 
 // 프로필 화면
 router.get('/profile', async function (req, res, next) {

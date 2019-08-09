@@ -83,17 +83,21 @@ block content
           i.far.fa-clock
           =' ' 
           =time
+        //- 댓댓글
         .col-auto.my-1
           a(href="#")
             i.fas.fa-reply
+        //- 본인의 댓글일 때만 수정 삭제 가능
         if (user)
           if (val.user.nickname == user.nickname)
+            //- 수정
             .col-auto.my-1
-              a(href="#")
-                i.far.fa-edit
+              i.far.fa-edit.updateComment(style="cursor: pointer;"
+                data-postNumber=data.postNumber data-commentID=val._id)
+            //- 삭제
             .col-auto.my-1
-              a(href="#")
-                i.far.fa-trash-alt
+              i.far.fa-trash-alt.deleteComment(style="cursor: pointer;"
+                data-postNumber=data.postNumber data-commentID=val._id)
       .row.col-auto.my-1
         =val.comment
   hr.row
