@@ -307,16 +307,16 @@ router.delete('/deleteComment', async function (req, res, next) {
 })
 
 // 댓글 수정
-router.put('/updateComment', async function (req, res, next) {
+router.post('/updateComment', async function (req, res, next) {
   try {
     if (req.user === undefined) req.redirect('/login')
     else {
-      const result = await Board.updateOne(
+      await Board.updateOne(
         // { $elemMatch: { _id: req.query.commentID } } 이렇게도 가능
         { postNumber: req.query.postNumber, 'comments._id': req.query.commentID },
-        { $set: { 'comments.$.comment': req.query.comment } }
+        { $set: { 'comments.$.comment': req.body.comment } }
       )
-      res.send(result)
+      res.redirect(req.header('Referer'))
     }
   } catch (error) {
     console.log(error)

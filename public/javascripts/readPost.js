@@ -52,19 +52,9 @@ Array.from(deleteComment).forEach(function (el) {
 const updateComment = document.getElementsByClassName('updateComment')
 Array.from(updateComment).forEach(function (el) {
   el.addEventListener('click', function () {
-    const postNumber = this.getAttribute('data-postNumber')
-    const commentID = this.getAttribute('data-commentID')
-    const xhttp = new XMLHttpRequest()
-    xhttp.onreadystatechange = function () {
-      if (this.readyState === 4 && this.status === 200) {
-        console.log(this.response)
-        // if (this.response.writeErrors) alert('댓글 삭제에 실패했습니다.')
-        // else el.parentElement.parentElement.parentElement.remove()
-      }
-    }
-    const url = '/updateComment?postNumber=' + postNumber + '&commentID=' + commentID + '&comment=댓글수정테스트'
-    xhttp.open('PUT', url, true)
-    xhttp.send()
+    // 댓글 입력창 보이기
+    const reply = el.parentElement.parentElement.parentElement.getElementsByTagName('form')
+    reply[0].classList.remove('d-none')
   })
 })
 

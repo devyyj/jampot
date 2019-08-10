@@ -83,23 +83,38 @@ block content
           i.far.fa-clock
           =' ' 
           =time
-        //- 댓댓글
-        .col-auto.my-1
-          a(href="#")
-            i.fas.fa-reply
-        //- 본인의 댓글일 때만 수정 삭제 가능
+        //- 로그인 하지 않으면 표시하지 않음
         if (user)
+          //- 댓댓글
+          .col-auto.my-1
+            a(href="#")
+              i.fas.fa-reply
+              //- 본인의 댓글일 때만 수정 삭제 가능
           if (val.user.nickname == user.nickname)
             //- 수정
             .col-auto.my-1
-              i.far.fa-edit.updateComment(style="cursor: pointer;"
-                data-postNumber=data.postNumber data-commentID=val._id)
+              i.far.fa-edit.updateComment(style="cursor: pointer;")
             //- 삭제
             .col-auto.my-1
               i.far.fa-trash-alt.deleteComment(style="cursor: pointer;"
                 data-postNumber=data.postNumber data-commentID=val._id)
       .row.col-auto.my-1
         =val.comment
+      //- .row
+      //- 댓글 작성란
+      form.d-none(id='reply' action="/updateComment?postNumber=" + data.postNumber + "&commentID=" + val._id method="post")
+        .input-group
+          .input-group-prepend
+            .input-group-text
+              i.far.fa-edit
+          if(user)
+            input.form-control(type="text" name='comment' required maxlength="400")
+            .input-group-append
+              button.btn.btn-outline-secondary(type="submit") 수정
+          else
+            input.form-control(type="text" placeholder="로그인이 필요합니다." disabled )
+            .input-group-append
+              button.btn.btn-outline-secondary(type="button" onclick="location.href='/login'") 로그인
   hr.row
   //- 댓글 작성란
   form(action="/createComment?postNumber=" + data.postNumber method="post")
