@@ -174,7 +174,7 @@ router.get('/deletePost', async function (req, res, next) {
     } else {
       const result = await Board.findOne({ postNumber: req.query.postNumber }).populate('user')
       // 첨부 파일 삭제
-      await resetUploadFile(result)
+      if (result.uploadFiles.length) await resetUploadFile(result)
 
       if (result.user.nickname !== req.user.nickname) {
         res.render('warning', { user: req.user, message: '권한이 없읍니다.' })
