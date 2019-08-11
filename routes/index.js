@@ -373,7 +373,7 @@ router.post('/updateReply', async function (req, res, next) {
   try {
     if (req.user === undefined) req.redirect('/login')
     else {
-      const result = await Board.updateOne(
+      await Board.updateOne(
         // 이 쿼리 짜는데 엄청 고생했다.
         // 댓글(배열) 수정은 arrayFilters를 안쓰고 가능한데
         // 댓댓글(배열 in 배열) 수정은 arrayFilters가 필수인 것 같다.
@@ -382,7 +382,6 @@ router.post('/updateReply', async function (req, res, next) {
         { $set: { 'comments.$.comments.$[array].comment': req.body.comment } },
         { arrayFilters: [{ 'array._id': req.query.replyID }] }
       )
-      console.log(result)
       res.redirect(req.header('Referer'))
     }
   } catch (error) {
