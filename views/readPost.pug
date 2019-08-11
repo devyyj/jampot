@@ -73,36 +73,55 @@ block content
   each val in data.comments
     - var time = moment(val.createTime).format("YYYY-MM-DD HH:mm:ss")
     div(style='font-size: 14px')
-      .row.bg-light
-        .col-auto.my-1
-          i.fas.fa-user-edit
-          =' '
-          span.user #{val.user.nickname}
-          =' '
-        .col-auto.my-1
-          i.far.fa-clock
-          =' ' 
-          =time
-        //- 로그인 하지 않으면 표시하지 않음
-        if (user)
-          //- 댓댓글
-          .col-auto.my-1
-            a(href="#")
+      .border-bottom
+        //- 댓글 정보
+        .bg-light
+          .row
+            //- 작성자
+            .col-auto.my-1
+              i.fas.fa-user-edit
+              =' '
+              span.user #{val.user.nickname}
+              =' '
+            //- 시간
+            .col-auto.my-1
+              i.far.fa-clock
+              =' ' 
+              =time        
+        //- 댓글 내용
+        .row.col-auto.my-1
+          =val.comment
+        .row
+          //- 로그인 하지 않으면 표시하지 않음
+          if (user)
+            //- 댓댓글 버튼
+            .col-auto.my-1
+              i.fas.fa-reply.replyComment(style="cursor: pointer;")
+            //- 본인의 댓글일 때만 수정 삭제 가능
+            if (val.user.nickname == user.nickname)
+              //- 수정 버튼
+              .col-auto.my-1
+                i.far.fa-edit.updateComment(style="cursor: pointer;")
+              //- 삭제 버튼
+              .col-auto.my-1
+                i.far.fa-trash-alt.deleteComment(style="cursor: pointer;"
+                  data-postNumber=data.postNumber data-commentID=val._id)
+      //- 댓댓글 입력란
+      form.d-none.replyCommentForm(action="/replyComment?postNumber=" + data.postNumber + "&commentID=" + val._id method="post")
+        .input-group
+          .input-group-prepend
+            .input-group-text
               i.fas.fa-reply
-              //- 본인의 댓글일 때만 수정 삭제 가능
-          if (val.user.nickname == user.nickname)
-            //- 수정
-            .col-auto.my-1
-              i.far.fa-edit.updateComment(style="cursor: pointer;")
-            //- 삭제
-            .col-auto.my-1
-              i.far.fa-trash-alt.deleteComment(style="cursor: pointer;"
-                data-postNumber=data.postNumber data-commentID=val._id)
-      .row.col-auto.my-1
-        =val.comment
-      //- .row
-      //- 댓글 작성란
-      form.d-none(id='reply' action="/updateComment?postNumber=" + data.postNumber + "&commentID=" + val._id method="post")
+          if(user)
+            input.form-control(type="text" name='comment' required maxlength="400")
+            .input-group-append
+              button.btn.btn-outline-secondary(type="submit") 등록
+          else
+            input.form-control(type="text" placeholder="로그인이 필요합니다." disabled )
+            .input-group-append
+              button.btn.btn-outline-secondary(type="button" onclick="location.href='/login'") 로그인
+      //- 댓글 수정란
+      form.d-none.updateCommentForm(action="/updateComment?postNumber=" + data.postNumber + "&commentID=" + val._id method="post")
         .input-group
           .input-group-prepend
             .input-group-text
@@ -115,8 +134,58 @@ block content
             input.form-control(type="text" placeholder="로그인이 필요합니다." disabled )
             .input-group-append
               button.btn.btn-outline-secondary(type="button" onclick="location.href='/login'") 로그인
+      //- 댓댓글 출력
+      each reply in val.comments
+        - var time = moment(reply.createTime).format("YYYY-MM-DD HH:mm:ss")
+        .border-bottom
+          .row    
+            i.fab.fa-replyd.col-auto.my-1.text-info(style='font-size: 20px')
+            =' '
+            .col-auto(style='font-size: 14px')
+              .row
+                //- 작성자            
+                .col-auto.my-1.p-0
+                  i.fas.fa-user-edit
+                  =' '
+                  span.user #{reply.user.nickname}
+                  =' '
+                //- 시간
+                .col-auto.my-1
+                  i.far.fa-clock
+                  =' ' 
+                  =time
+              //- 댓댓글 내용
+              .row            
+                .col-auto.my-1.p-0
+                  =reply.comment
+              .row
+                //- 로그인 하지 않으면 표시하지 않음
+                if (user)            
+                  //- 본인의 댓글일 때만 수정 삭제 가능
+                  if (reply.user.nickname == user.nickname)
+                    //- 댓댓글 수정 버튼
+                    .col-auto.my-1.pl-0
+                      i.far.fa-edit.updateReply(style="cursor: pointer;")
+                    //- 댓댓글 삭제 버튼
+                    .col-auto.my-1
+                      i.far.fa-trash-alt.deleteReply(style="cursor: pointer;"                      
+                        data-postNumber=data.postNumber data-commentID=val._id data-replyID=reply._id)
+          //- 댓댓글 수정란
+          form.d-none(action="/updateReply?postNumber=" + data.postNumber + '&commentID=' + val._id + "&replyID=" + reply._id method="post")
+            .input-group
+              .input-group-prepend
+                .input-group-text
+                  i.far.fa-edit
+              if(user)
+                input.form-control(type="text" name='comment' required maxlength="400")
+                .input-group-append
+                  button.btn.btn-outline-secondary(type="submit") 수정
+              else
+                input.form-control(type="text" placeholder="로그인이 필요합니다." disabled )
+                .input-group-append
+                  button.btn.btn-outline-secondary(type="button" onclick="location.href='/login'") 로그인
   hr.row
-  //- 댓글 작성란
+  //- 댓글 입력란
   form(action="/createComment?postNumber=" + data.postNumber method="post")
     .input-group
       .input-group-prepend

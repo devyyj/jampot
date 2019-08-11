@@ -6,7 +6,7 @@ for (const key in object) {
   if (object.hasOwnProperty(key)) {
     const element = object[key]
     if (element.innerHTML === '운영자') {
-      element.classList.add('badge', 'badge-info')
+      element.classList.add('badge', 'badge-primary')
       element.setAttribute('style', 'font-size: 12px')
     }
   }

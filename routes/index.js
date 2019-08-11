@@ -137,7 +137,8 @@ router.get('/readPost', async function (req, res, next) {
     await Board.updateOne({ postNumber: req.query.postNumber }, { $inc: { hits: 1 } })
     const result = await Board.findOne({ postNumber: req.query.postNumber })
       .populate('user', 'nickname')
-      .populate('comments.user')
+      .populate('comments.user', 'nickname')
+      .populate('comments.comments.user', 'nickname')
     const next = await Board.findOne({ _id: { $gt: result._id } }).sort({ _id: 1 })
     const prev = await Board.findOne({ _id: { $lt: result._id } }).sort({ _id: -1 })
     res.render('readPost', { data: result, moment: moment, user: req.user, next: next, prev: prev })
@@ -290,13 +291,56 @@ router.post('/createComment', async function (req, res, next) {
 })
 
 // 댓글 삭제
-router.delete('/deleteComment', async function (req, res, next) {
+router.get('/deleteComment', async function (req, res, next) {
   try {
     if (req.user === undefined) req.redirect('/login')
     else {
       const result = await Board.updateOne(
         { postNumber: req.query.postNumber },
         { $pull: { comments: { _id: req.query.commentID } } }
+      )
+      res.send(result)
+    }
+  } catch (error) {
+    console.log(error)
+    next({ message: '알 수 없는 오류가 발생했습니다.' })
+  }
+})
+
+// 댓댓글 입력
+router.post('/replyComment', async function (req, res, next) {
+  try {
+    if (req.user === undefined) req.redirect('/login')
+    else {
+      const user = await User.findOne({ username: req.user.username })
+      await Board.updateOne(
+        // { $elemMatch: { _id: req.query.commentID } } 이렇게도 가능
+        { postNumber: req.query.postNumber, 'comments._id': req.query.commentID },
+        {
+          $push: {
+            'comments.$.comments': {
+              user: user._id,
+              comment: req.body.comment
+            }
+          }
+        }
+      )
+      res.redirect(req.header('Referer'))
+    }
+  } catch (error) {
+    console.log(error)
+    next({ message: '알 수 없는 오류가 발생했습니다.' })
+  }
+})
+
+// 댓댓글 삭제
+router.get('/deleteReply', async function (req, res, next) {
+  try {
+    if (req.user === undefined) req.redirect('/login')
+    else {
+      const result = await Board.updateOne(
+        { postNumber: req.query.postNumber, 'comments._id': req.query.commentID },
+        { $pull: { 'comments.$.comments': { _id: req.query.replyID } } }
       )
       res.send(result)
     }
@@ -324,7 +368,28 @@ router.post('/updateComment', async function (req, res, next) {
   }
 })
 
-// 댓댓글
+// 댓댓글 수정
+router.post('/updateReply', async function (req, res, next) {
+  try {
+    if (req.user === undefined) req.redirect('/login')
+    else {
+      const result = await Board.updateOne(
+        // 이 쿼리 짜는데 엄청 고생했다.
+        // 댓글(배열) 수정은 arrayFilters를 안쓰고 가능한데
+        // 댓댓글(배열 in 배열) 수정은 arrayFilters가 필수인 것 같다.
+        // 혹시 다른 방법이 있는지 확인이 필요하다.
+        { postNumber: req.query.postNumber, 'comments._id': req.query.commentID },
+        { $set: { 'comments.$.comments.$[array].comment': req.body.comment } },
+        { arrayFilters: [{ 'array._id': req.query.replyID }] }
+      )
+      console.log(result)
+      res.redirect(req.header('Referer'))
+    }
+  } catch (error) {
+    console.log(error)
+    next({ message: '알 수 없는 오류가 발생했습니다.' })
+  }
+})
 
 // 프로필 화면
 router.get('/profile', async function (req, res, next) {

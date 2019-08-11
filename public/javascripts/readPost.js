@@ -38,11 +38,11 @@ Array.from(deleteComment).forEach(function (el) {
         if (this.readyState === 4 && this.status === 200) {
           console.log(this.response)
           if (this.response.writeErrors) alert('댓글 삭제에 실패했습니다.')
-          else el.parentElement.parentElement.parentElement.remove()
+          else window.location.reload()
         }
       }
       const url = '/deleteComment?postNumber=' + postNumber + '&commentID=' + commentID
-      xhttp.open('DELETE', url, true)
+      xhttp.open('GET', url, true)
       xhttp.send()
     }
   })
@@ -52,10 +52,51 @@ Array.from(deleteComment).forEach(function (el) {
 const updateComment = document.getElementsByClassName('updateComment')
 Array.from(updateComment).forEach(function (el) {
   el.addEventListener('click', function () {
-    // 댓글 입력창 보이기
-    const reply = el.parentElement.parentElement.parentElement.getElementsByTagName('form')
+    const reply = el.parentElement.parentElement.parentElement.parentElement.getElementsByClassName('updateCommentForm')
+    // 댓글 수정창 보이기
     reply[0].classList.remove('d-none')
   })
 })
 
 // 댓댓글
+const replyComment = document.getElementsByClassName('replyComment')
+Array.from(replyComment).forEach(function (el) {
+  el.addEventListener('click', function () {
+    const reply = el.parentElement.parentElement.parentElement.parentElement.getElementsByClassName('replyCommentForm')
+    // 댓댓글 입력창 보이기
+    reply[0].classList.remove('d-none')
+  })
+})
+
+// 댓댓글 삭제
+const deleteReply = document.getElementsByClassName('deleteReply')
+Array.from(deleteReply).forEach(function (el) {
+  el.addEventListener('click', function () {
+    if (confirm('리얼루다가 댓글을 삭제하시겠읍니까?')) {
+      const postNumber = this.getAttribute('data-postNumber')
+      const commentID = this.getAttribute('data-commentID')
+      const replyID = this.getAttribute('data-replyID')
+      const xhttp = new XMLHttpRequest()
+      xhttp.onreadystatechange = function () {
+        if (this.readyState === 4 && this.status === 200) {
+          console.log(this.response)
+          if (this.response.writeErrors) alert('댓글 삭제에 실패했습니다.')
+          else window.location.reload()
+        }
+      }
+      const url = '/deleteReply?postNumber=' + postNumber + '&commentID=' + commentID + '&replyID=' + replyID
+      xhttp.open('GET', url, true)
+      xhttp.send()
+    }
+  })
+})
+
+// 댓댓글 수정
+const updateReply = document.getElementsByClassName('updateReply')
+Array.from(updateReply).forEach(function (el) {
+  el.addEventListener('click', function () {
+    const reply = el.parentElement.parentElement.parentElement.parentElement.nextSibling
+    // 댓글 수정창 보이기
+    reply.classList.remove('d-none')
+  })
+})
