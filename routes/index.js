@@ -18,8 +18,8 @@ router.get('/test', function (req, res) {
   res.render('test')
 })
 
-// reply count
-function replyCount (params) {
+// 댓댓글 카운트, 총 댓글 수를 계산하기 위함
+function countReply (params) {
   let count = 0
   params.forEach(element => {
     count += element.comments.length
@@ -37,7 +37,7 @@ router.get('/', async function (req, res, next) {
       populate: 'user'
     }
     const result = await Board.paginate({}, opt)
-    res.render('index', { data: result, user: req.user, moment: moment, replyCount: replyCount })
+    res.render('index', { data: result, user: req.user, moment: moment, countReply: countReply })
   } catch (error) {
     console.log(error)
     next({ message: '알 수 없는 오류가 발생했습니다.' })
@@ -150,7 +150,7 @@ router.get('/readPost', async function (req, res, next) {
       .populate('comments.comments.user', 'nickname')
     const next = await Board.findOne({ _id: { $gt: result._id } }).sort({ _id: 1 })
     const prev = await Board.findOne({ _id: { $lt: result._id } }).sort({ _id: -1 })
-    res.render('readPost', { data: result, moment: moment, user: req.user, next: next, prev: prev })
+    res.render('readPost', { data: result, moment: moment, user: req.user, next: next, prev: prev, countReply: countReply })
   } catch (error) {
     console.log(error)
     next({ message: '알 수 없는 오류가 발생했습니다.' })

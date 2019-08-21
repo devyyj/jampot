@@ -51,7 +51,7 @@ block content
               .col-auto
                 i.far.fa-comment
                 =' '
-                |#{val.comments.length + replyCount(val.comments)}
+                |#{val.comments.length + countReply(val.comments)}
   //- 페이지네이션
   nav(aria-label="Page navigation example")
     ul.pagination.pagination-sm.justify-content-center

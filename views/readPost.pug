@@ -37,7 +37,7 @@ block content
         .col-auto
           i.far.fa-comment
           =' '
-          |#{data.comments.length}
+          |#{data.comments.length + countReply(data.comments)}
   hr.row
   //- 게시글 내용
   div(style="white-space: pre-wrap;")
