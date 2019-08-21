@@ -18,6 +18,15 @@ router.get('/test', function (req, res) {
   res.render('test')
 })
 
+// reply count
+function replyCount (params) {
+  let count = 0
+  params.forEach(element => {
+    count += element.comments.length
+  })
+  return count
+}
+
 // 게시글 리스트, 메인 화면
 router.get('/', async function (req, res, next) {
   try {
@@ -28,7 +37,7 @@ router.get('/', async function (req, res, next) {
       populate: 'user'
     }
     const result = await Board.paginate({}, opt)
-    res.render('index', { data: result, user: req.user, moment: moment })
+    res.render('index', { data: result, user: req.user, moment: moment, replyCount: replyCount })
   } catch (error) {
     console.log(error)
     next({ message: '알 수 없는 오류가 발생했습니다.' })
