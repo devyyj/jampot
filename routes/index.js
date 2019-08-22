@@ -37,7 +37,7 @@ router.get('/', async function (req, res, next) {
       populate: 'user'
     }
     const result = await Board.paginate({}, opt)
-    res.render('index', { data: result, user: req.user, moment: moment, countReply: countReply })
+    res.render('index', { data: result, user: req.user, moment: moment, countReply: countReply, title: '잼팟 - JAM in the POT' })
   } catch (error) {
     console.log(error)
     next({ message: '알 수 없는 오류가 발생했습니다.' })
