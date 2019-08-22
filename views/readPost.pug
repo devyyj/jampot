@@ -107,7 +107,7 @@ block content
                 i.far.fa-trash-alt.deleteComment(style="cursor: pointer;"
                   data-postNumber=data.postNumber data-commentID=val._id)
       //- 댓댓글 입력란
-      form.d-none.replyCommentForm(action="/replyComment?postNumber=" + data.postNumber + "&commentID=" + val._id method="post")
+      form.d-none.replyCommentForm.createReply(action="/replyComment?postNumber=" + data.postNumber + "&commentID=" + val._id method="post")
         .input-group
           .input-group-prepend
             .input-group-text
@@ -115,7 +115,7 @@ block content
           if(user)
             input.form-control(type="text" name='comment' required maxlength="400")
             .input-group-append
-              button.btn.btn-outline-secondary(type="submit") 등록
+              button.btn.btn-outline-secondary.submitReply(type="submit") 등록
           else
             input.form-control(type="text" placeholder="로그인이 필요합니다." disabled )
             .input-group-append
@@ -127,7 +127,7 @@ block content
             .input-group-text
               i.far.fa-edit
           if(user)
-            input.form-control(type="text" name='comment' required maxlength="400")
+            input.form-control(type="text" name='comment' required maxlength="400" value=val.comment)
             .input-group-append
               button.btn.btn-outline-secondary(type="submit") 수정
           else
@@ -177,7 +177,7 @@ block content
                 .input-group-text
                   i.far.fa-edit
               if(user)
-                input.form-control(type="text" name='comment' required maxlength="400")
+                input.form-control(type="text" name='comment' required maxlength="400" value=reply.comment)
                 .input-group-append
                   button.btn.btn-outline-secondary(type="submit") 수정
               else
@@ -186,7 +186,7 @@ block content
                   button.btn.btn-outline-secondary(type="button" onclick="location.href='/login'") 로그인
   hr.row
   //- 댓글 입력란
-  form(action="/createComment?postNumber=" + data.postNumber method="post")
+  form(id='createComment' action="/createComment?postNumber=" + data.postNumber method="post")
     .input-group
       .input-group-prepend
         .input-group-text
@@ -194,7 +194,7 @@ block content
       if(user)
         input.form-control(type="text" name='comment' required maxlength="400")
         .input-group-append
-          button.btn.btn-outline-secondary(type="submit") 등록
+          button.btn.btn-outline-secondary(id='submitComment' type="submit") 등록
       else
         input.form-control(type="text" placeholder="로그인이 필요합니다." disabled )
         .input-group-append
@@ -237,4 +237,5 @@ block content
               button.btn.btn-danger(type="button" onclick="location.href='/deletePost?postNumber=" + data.postNumber + "'") 삭제  
   //- 로그인 모달 포함
   include askLogin.pug
+  script(src="javascripts/common.js")
   script(src="javascripts/readPost.js")
