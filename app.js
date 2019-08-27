@@ -7,8 +7,11 @@ const mongoose = require('mongoose')
 var passport = require('passport')
 var LocalStrategy = require('passport-local').Strategy
 var indexRouter = require('./routes/index')
+var favicon = require('serve-favicon')
 
 var app = express()
+
+app.use(favicon(path.join(__dirname, 'public', 'favicon', 'favicon.ico')))
 
 // mongoose
 mongoose.connect('mongodb://localhost/local',
