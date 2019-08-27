@@ -239,3 +239,8 @@ block content
   include askLogin.pug
   script(src="javascripts/common.js")
   script(src="javascripts/readPost.js")
+  script(src="javascripts/pullToRefresh.js")
+  script.
+    PullToRefresh.init({
+      mainElement: 'body'
+    })
