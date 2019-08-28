@@ -30,6 +30,13 @@ function countReply (params) {
 // 게시글 리스트, 메인 화면
 router.get('/', async function (req, res, next) {
   try {
+    // 베스트 게시글 쿼리
+    const start = moment().startOf('week')
+    const end = moment().endOf('week')
+    const best = await Board.find({ createTime: { $gte: start, $lt: end }, like: { $gt: 0 } })
+      .sort({ like: -1, postNumber: -1 })
+      .limit(5).populate('user')
+    // 전체 게시글 쿼리 with paginate
     const opt = {
       sort: { postNumber: -1 },
       page: Number(req.query.page) || 1,
@@ -37,7 +44,7 @@ router.get('/', async function (req, res, next) {
       populate: 'user'
     }
     const result = await Board.paginate({}, opt)
-    res.render('index', { data: result, user: req.user, moment: moment, countReply: countReply, title: '잼팟 - JAM in the POT' })
+    res.render('index', { best: best, data: result, user: req.user, moment: moment, countReply: countReply, title: '잼팟 - JAM in the POT' })
   } catch (error) {
     console.log(error)
     next({ message: '알 수 없는 오류가 발생했습니다.' })

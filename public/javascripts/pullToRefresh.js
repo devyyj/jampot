@@ -367,3 +367,7 @@
   return index;
 
 })));
+
+PullToRefresh.init({
+  mainElement: 'body'
+})
