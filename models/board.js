@@ -38,7 +38,11 @@ const schema = new mongoose.Schema({
   updateTime: { type: Date, default: Date.now }
 })
 
-schema.plugin(mai.plugin, { model: 'board', field: 'postNumber', startAt: 1 })
+schema.plugin(mai.plugin, { model: 'maplestory', field: 'postNumber', startAt: 1 })
+schema.plugin(mai.plugin, { model: 'free', field: 'postNumber', startAt: 1 })
 schema.plugin(mongoosePaginate)
 
-module.exports = mongoose.model('board', schema)
+module.exports = {
+  mapleStory: mongoose.model('maplestory', schema),
+  free: mongoose.model('free', schema)
+}

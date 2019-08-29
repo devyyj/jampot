@@ -7,6 +7,7 @@ const mongoose = require('mongoose')
 var passport = require('passport')
 var LocalStrategy = require('passport-local').Strategy
 var indexRouter = require('./routes/index')
+var boardRouter = require('./routes/board')
 var favicon = require('serve-favicon')
 
 var app = express()
@@ -41,6 +42,7 @@ passport.serializeUser(User.serializeUser())
 passport.deserializeUser(User.deserializeUser())
 
 app.use('/', indexRouter)
+app.use('/:pot', boardRouter)
 
 // 에러 처리
 app.use(function (err, req, res, next) {

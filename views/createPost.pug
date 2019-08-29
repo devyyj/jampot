@@ -1,7 +1,7 @@
 extends layout
 
 block content    
-  form(id='createPostForm' action="/createPost?postNumber=" + data.postNumber method="post" enctype="multipart/form-data")
+  form(id='createPostForm' action=baseURL + "/createPost?postNumber=" + data.postNumber method="post" enctype="multipart/form-data")
     .form-group
       label 제목
       input(type="text" name="title" value=data.title required class="form-control" maxlength="40")
@@ -15,5 +15,5 @@ block content
     input(type="button" class="btn btn-secondary" value="취소" 
       onclick="location.href='javascript:history.back()'")
   
-  script(src="javascripts/common.js")
-  script(src="javascripts/createPost.js")
+  script(src="/javascripts/common.js")
+  script(src="/javascripts/createPost.js")
