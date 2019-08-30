@@ -34,6 +34,7 @@ window.addEventListener('load', function () {
       if (confirm('리얼루다가 댓글을 삭제하시겠읍니까?')) {
         const postNumber = this.getAttribute('data-postNumber')
         const commentID = this.getAttribute('data-commentID')
+        const baseURL = this.getAttribute('data-baseURL')
         const xhttp = new XMLHttpRequest()
         xhttp.onreadystatechange = function () {
           if (this.readyState === 4 && this.status === 200) {
@@ -42,7 +43,7 @@ window.addEventListener('load', function () {
             else window.location.reload()
           }
         }
-        const url = '/deleteComment?postNumber=' + postNumber + '&commentID=' + commentID
+        const url = baseURL + '/deleteComment?postNumber=' + postNumber + '&commentID=' + commentID
         xhttp.open('GET', url, true)
         xhttp.send()
       }
@@ -77,6 +78,7 @@ window.addEventListener('load', function () {
         const postNumber = this.getAttribute('data-postNumber')
         const commentID = this.getAttribute('data-commentID')
         const replyID = this.getAttribute('data-replyID')
+        const baseURL = this.getAttribute('data-baseURL')
         const xhttp = new XMLHttpRequest()
         xhttp.onreadystatechange = function () {
           if (this.readyState === 4 && this.status === 200) {
@@ -85,7 +87,7 @@ window.addEventListener('load', function () {
             else window.location.reload()
           }
         }
-        const url = '/deleteReply?postNumber=' + postNumber + '&commentID=' + commentID + '&replyID=' + replyID
+        const url = baseURL + '/deleteReply?postNumber=' + postNumber + '&commentID=' + commentID + '&replyID=' + replyID
         xhttp.open('GET', url, true)
         xhttp.send()
       }

@@ -16,16 +16,25 @@ moment.locale('ko')
 const config = require('../common/config.json')
 
 let Board
+let boardName
 // URL 검증 & DB 설정
 function init (baseURL) {
   for (const iterator of config.boardList) {
+    // board list에 있는 url만 접근을 허용
     if (baseURL.slice(1) === iterator) {
+      // url에 따라 model을 다르게 설정
       switch (iterator) {
         case 'free':
           Board = models.free
+          boardName = '자유'
           break
         case 'maplestory':
           Board = models.mapleStory
+          boardName = '메이플스토리'
+          break
+        case 'support':
+          Board = models.support
+          boardName = '건의사항'
           break
         default:
           break
@@ -37,6 +46,7 @@ function init (baseURL) {
 }
 
 // baseURL 확인해서 Board model 설정
+// baseURL이 board list에 있는 url이 아니라면 return 404
 router.use('/', function (req, res, next) {
   if (init(req.baseUrl)) next()
   else return res.sendStatus(404)
@@ -72,14 +82,14 @@ router.get('/', async function (req, res, next) {
       populate: 'user'
     }
     const result = await Board.paginate({}, opt)
-    res.render('index', {
+    res.render('board', {
       baseURL: req.baseUrl,
       best: best,
       data: result,
       user: req.user,
       moment: moment,
       countReply: countReply,
-      title: '잼팟 - JAM in the POT'
+      boardName: boardName
     })
   } catch (error) {
     console.log(error)
@@ -193,7 +203,15 @@ router.get('/readPost', async function (req, res, next) {
       .populate('comments.comments.user', 'nickname')
     const next = await Board.findOne({ _id: { $gt: result._id } }).sort({ _id: 1 })
     const prev = await Board.findOne({ _id: { $lt: result._id } }).sort({ _id: -1 })
-    res.render('readPost', { data: result, moment: moment, user: req.user, next: next, prev: prev, countReply: countReply })
+    res.render('readPost', {
+      baseURL: req.baseUrl,
+      data: result,
+      moment: moment,
+      user: req.user,
+      next: next,
+      prev: prev,
+      countReply: countReply
+    })
   } catch (error) {
     console.log(error)
     next({ message: '알 수 없는 오류가 발생했습니다.' })
@@ -210,7 +228,7 @@ router.get('/updatePost', async function (req, res, next) {
       if (result.user.nickname !== req.user.nickname) {
         res.render('warning', { user: req.user, message: '권한이 없읍니다.' })
       } else {
-        res.render('createPost', { user: req.user, data: result })
+        res.render('createPost', { baseURL: req.baseUrl, user: req.user, data: result })
       }
     }
   } catch (error) {
@@ -250,14 +268,14 @@ router.get('/likePost', async function (req, res) {
       postNumber: req.query.postNumber,
       voteList: req.user.username
     })
-    if (voteResult) msg = '이미 "추천/반대" 하셨읍니다.'
+    if (voteResult) msg = '이미 추천/반대하셨읍니다.'
     else {
       let inc
       if (req.query.disLike === 'true') {
-        msg = '"반대" 하셨읍니다.'
+        msg = '반대하셨읍니다!'
         inc = { disLike: 1 }
       } else {
-        msg = '"추천" 하셨읍니다.'
+        msg = '추천하셨읍니다!'
         inc = { like: 1 }
       }
       await Board.updateOne({ postNumber: req.query.postNumber },

@@ -5,12 +5,12 @@ const User = require('../models/user')
 const url = require('url')
 
 router.get('/', function (req, res) {
-  return res.send('hi')
+  return res.render('index', { user: req.user, title: '잼팟 - JAM in the POT' })
 })
 
 // User 생성, 유저 생성, 회원 가입
 router.get('/register', function (req, res) {
-  res.render('register', { user: req.user })
+  res.render('user/register', { user: req.user })
 })
 
 router.post('/register', function (req, res) {
@@ -34,7 +34,7 @@ router.get('/login', function (req, res) {
       req.session.backURL = parseURL.href
     }
   }
-  res.render('login', { user: req.user, err: req.query.result })
+  res.render('user/login', { user: req.user, err: req.query.result })
 })
 
 // 로그인 처리
@@ -64,7 +64,7 @@ router.get('/profile', async function (req, res, next) {
       res.redirect('/login')
     } else {
       const result = await User.findOne({ username: req.user.username })
-      res.render('profile', { user: req.user, data: result })
+      res.render('user/profile', { user: req.user, data: result })
     }
   } catch (error) {
     console.log(error)

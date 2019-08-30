@@ -1,104 +1,12 @@
 extends layout
 
-block content  
+block content
   if (user)
-    p 방문해주셔서 고맙읍니다, 
       kbd #{user.nickname}
-      |님
-  button.btn.btn-sm.btn-primary(id='createPost' date-baseURL=baseURL value=user onclick='createPost()') 글쓰기
+      |님, 하잇!
   hr
-  //- 베스트 게시물
-  nav
-    .nav.nav-tabs(id="nav-tab" role="tablist")
-      a.nav-item.nav-link.active(id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true") 주간 베스트 잼
-      //- a.nav-item.nav-link(id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false") 이번 주
-      //- a.nav-item.nav-link(id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false") 이번 달
-  .tab-content(id="nav-tabContent")
-    .tab-pane.fade.show.active(id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab")
-      table.table.table-hover.table-borderless(style='font-size: 12px')
-        tbody
-          each val, index in best
-            tr(onclick='tableRow('+ val.postNumber + ')' style="cursor: pointer;")
-              td
-                i.far.fa-thumbs-up.text-danger
-                =' '
-                span.text-danger #{val.like} 
-                =' '
-                =val.title
-                =' '
-                i.fas.fa-user-edit
-                =' '
-                span.user #{val.user.nickname}
-    //- .tab-pane.fade(id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab") 준비중..
-    //- .tab-pane.fade(id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab") 준비중..
-  //- 게시글 리스트
-  table.table.table-hover.table-sm(style='font-size: 12px')
-    tbody
-      each val in data.docs
-        tr(onclick='tableRow('+ val.postNumber + ')' style="cursor: pointer;")
-          //- 썸네일
-          th.align-middle.text-center(style="width: 60px")
-            if(val.uploadFiles[0])
-              .text-center
-              img.border(style="width:50px; height: 50px;" src=val.uploadFiles[0].thumbnailURL alt="" )
-            else
-              =val.postNumber
-          td
-            div(style='font-size: 16px; white-space: pre-wrap;')
-              =val.title
-            .row
-              .col-auto
-                //- 닉네임
-                i.fas.fa-user-edit
-                =' '
-                span.user #{val.user.nickname}
-                =' '
-              .col-auto
-                i.far.fa-clock
-                =' ' 
-                |#{moment(val.createTime).fromNow()}
-            .row
-              .col-auto
-                i.far.fa-thumbs-up
-                =' '
-                span.text-danger #{val.like} 
-                =' '
-              .col-auto
-                i.far.fa-thumbs-down 
-                =' '
-                span.text-primary #{val.disLike}
-                =' '
-              .col-auto
-                i.far.fa-eye
-                =' '
-                |#{val.hits}
-                =' '
-              .col-auto
-                i.far.fa-comment
-                =' '
-                |#{val.comments.length + countReply(val.comments)}
-  //- 페이지네이션
-  nav(aria-label="Page navigation example")
-    ul.pagination.pagination-sm.justify-content-center
-      if data.hasPrevPage
-        li.page-item
-          a.page-link(href="/?page="+data.prevPage aria-label="Previous")
-            span(aria-hidden="true") &laquo;
-      else
-        li.page-item.disabled
-          a.page-link(href="/?page="+data.prevPage aria-label="Previous")
-            span(aria-hidden="true") &laquo;
-      li.page-item
-        a.page-link #{data.page} / #{data.totalPages}
-      if data.hasNextPage
-        li.page-item
-        a.page-link(href="/?page="+data.nextPage aria-label="Next")
-          span(aria-hidden="true") &raquo;  
-      else
-        li.page-item.disabled
-          a.page-link(href="/?page="+data.nextPage aria-label="Next")
-            span(aria-hidden="true") &raquo;
-
-  include askLogin.pug
-  script(src="javascripts/index.js")
-  script(src="javascripts/pullToRefresh.js")
+  a(href="/free") 자유 게시팟
+  br
+  a(href="/maplestory") 메이플스토리 게시팟
+  br
+  a(href="/support") 건의사항 게시팟

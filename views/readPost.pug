@@ -59,12 +59,12 @@ block content
   //- 이전글/다음글
   .list-group(style='font-size: 14px')
     if(next)
-      a.list-group-item.list-group-item-action(href="/readPost?postNumber=" + next.postNumber)
+      a.list-group-item.list-group-item-action(href=baseURL + "/readPost?postNumber=" + next.postNumber)
         i.fas.fa-chevron-up
         =' '
         |다음글 : #{next.title}
     if(prev)
-      a.list-group-item.list-group-item-action(href="/readPost?postNumber=" + prev.postNumber)
+      a.list-group-item.list-group-item-action(href=baseURL + "/readPost?postNumber=" + prev.postNumber)
         i.fas.fa-chevron-down
         =' '
         |이전글 : #{prev.title}
@@ -105,9 +105,9 @@ block content
               //- 삭제 버튼
               .col-auto.my-1
                 i.far.fa-trash-alt.deleteComment(style="cursor: pointer;"
-                  data-postNumber=data.postNumber data-commentID=val._id)
+                  data-postNumber=data.postNumber data-commentID=val._id data-baseURL=baseURL)
       //- 댓댓글 입력란
-      form.d-none.replyCommentForm.createReply(action="/replyComment?postNumber=" + data.postNumber + "&commentID=" + val._id method="post")
+      form.d-none.replyCommentForm.createReply(action=baseURL + "/replyComment?postNumber=" + data.postNumber + "&commentID=" + val._id method="post")
         .input-group
           .input-group-prepend
             .input-group-text
@@ -121,7 +121,7 @@ block content
             .input-group-append
               button.btn.btn-outline-secondary(type="button" onclick="location.href='/login'") 로그인
       //- 댓글 수정란
-      form.d-none.updateCommentForm(action="/updateComment?postNumber=" + data.postNumber + "&commentID=" + val._id method="post")
+      form.d-none.updateCommentForm(action=baseURL + "/updateComment?postNumber=" + data.postNumber + "&commentID=" + val._id method="post")
         .input-group
           .input-group-prepend
             .input-group-text
@@ -169,9 +169,10 @@ block content
                     //- 댓댓글 삭제 버튼
                     .col-auto.my-1
                       i.far.fa-trash-alt.deleteReply(style="cursor: pointer;"                      
-                        data-postNumber=data.postNumber data-commentID=val._id data-replyID=reply._id)
+                        data-postNumber=data.postNumber data-commentID=val._id data-replyID=reply._id
+                        data-baseURL=baseURL)
           //- 댓댓글 수정란
-          form.d-none(action="/updateReply?postNumber=" + data.postNumber + '&commentID=' + val._id + "&replyID=" + reply._id method="post")
+          form.d-none(action=baseURL + "/updateReply?postNumber=" + data.postNumber + '&commentID=' + val._id + "&replyID=" + reply._id method="post")
             .input-group
               .input-group-prepend
                 .input-group-text
@@ -186,7 +187,7 @@ block content
                   button.btn.btn-outline-secondary(type="button" onclick="location.href='/login'") 로그인
   hr.row
   //- 댓글 입력란
-  form(id='createComment' action="/createComment?postNumber=" + data.postNumber method="post")
+  form(id='createComment' action=baseURL + "/createComment?postNumber=" + data.postNumber method="post")
     .input-group
       .input-group-prepend
         .input-group-text
@@ -202,22 +203,22 @@ block content
   hr.row
   //- 추천 버튼
   button.btn.btn-danger(id='like' type="button" onclick="likePost()"
-    value=data.postNumber data-user=user)
+    value=data.postNumber data-user=user data-baseURL=baseURL)
     div
       i.far.fa-thumbs-up
   =' '
   //- 반대 버튼
   button.btn.btn-primary(id='disLike' type="button" onclick="likePost(true)"
-    value=data.postNumber data-user=user)
+    value=data.postNumber data-user=user data-baseURL=baseURL)
     div
       i.far.fa-thumbs-down 
   = ' '
-  button.btn.btn-secondary(type="button" onclick="location.href='/'") 목록
+  button.btn.btn-secondary(type="button" onclick="location.href='" + baseURL + "'") 목록
   = ' '
   //- 게시글 작성자와 현재 접속자가 같으면 수정/삭제 버튼을 생성
   if(user)
     if(data.user.nickname == user.nickname)
-      button.btn.btn-warning(type="button" onclick="location.href='/updatePost?postNumber=" + data.postNumber + "'") 수정
+      button.btn.btn-warning(type="button" onclick="location.href='" + baseURL + "/updatePost?postNumber=" + data.postNumber + "'") 수정
       = ' '
       button.btn.btn-danger(type="button" data-toggle="modal" data-target="#deleteModal") 삭제
       //- 부트스트랩에서 제공하는 modal 소스
@@ -234,9 +235,9 @@ block content
               strong 정말 삭제하시겠읍니까?
             .modal-footer
               button.btn.btn-secondary(type="button" data-dismiss="modal") 취소
-              button.btn.btn-danger(type="button" onclick="location.href='/deletePost?postNumber=" + data.postNumber + "'") 삭제  
+              button.btn.btn-danger(type="button" onclick="location.href='"+ baseURL + "/deletePost?postNumber=" + data.postNumber + "'") 삭제  
   //- 로그인 모달 포함
   include askLogin.pug
-  script(src="javascripts/common.js")
-  script(src="javascripts/readPost.js")
-  script(src="javascripts/pullToRefresh.js")
+  script(src="/javascripts/common.js")
+  script(src="/javascripts/readPost.js")
+  script(src="/javascripts/pullToRefresh.js")

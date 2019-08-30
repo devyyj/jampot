@@ -1,4 +1,4 @@
-extends layout
+extends ../layout
 
 block content
   form.needs-validation(action="/profile" method="post" novalidate)
@@ -36,4 +36,4 @@ block content
   if (err)
     p.text-danger #{err}
 
-  script(src="javascripts/register.js")
+  script(src="/javascripts/register.js")

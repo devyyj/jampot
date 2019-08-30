@@ -5,12 +5,12 @@ function createPost () {
   const el = document.getElementById('createPost')
   if (el.value === '') $('#askLogin').modal('show')
   else {
-    const baseURL = el.getAttribute('date-baseURL')
+    const baseURL = el.getAttribute('data-baseURL')
     window.location.href = baseURL + '/createPost'
   }
 }
 
 // eslint-disable-next-line no-unused-vars
-function tableRow (postNumber) {
-  window.location.href = '/readPost?postNumber=' + postNumber
+function tableRow (postNumber, baseURL) {
+  window.location.href = baseURL + '/readPost?postNumber=' + postNumber
 }
