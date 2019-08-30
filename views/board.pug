@@ -5,11 +5,15 @@ block content
     p 
       kbd #{user.nickname}
       |님,
-  p
-    span.h3 #{boardName}
-    |게시
-    span.h3 팟
-    |에 오셨습니다!  
+  .card.border-info.mb-3
+    .card-header
+      span.h4 #{boardName} 
+      |게시
+      span.h4 팟 
+      |입니다!
+    .card-body.text-info
+      h5.card-title Info card title
+      p.card-text Some quick example text to build on the card title and make up the bulk of the card's content.
   button.btn.btn-sm.btn-primary(id='createPost' data-baseURL=baseURL value=user onclick='createPost()') 잼쓰기
   hr
   //- 베스트 게시물
