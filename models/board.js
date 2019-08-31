@@ -45,19 +45,14 @@ const boardSchema = {
  * 3.board.js에 init 함수 수정
  */
 const freeSchema = new mongoose.Schema(boardSchema)
-freeSchema.plugin(mai.plugin, { model: 'maplestory', field: 'postNumber', startAt: 1 })
+freeSchema.plugin(mai.plugin, { model: 'free', field: 'postNumber', startAt: 1 })
 freeSchema.plugin(mongoosePaginate)
-
-const maplestorySchema = new mongoose.Schema(boardSchema)
-maplestorySchema.plugin(mai.plugin, { model: 'free', field: 'postNumber', startAt: 1 })
-maplestorySchema.plugin(mongoosePaginate)
 
 const supportSchema = new mongoose.Schema(boardSchema)
 supportSchema.plugin(mai.plugin, { model: 'support', field: 'postNumber', startAt: 1 })
 supportSchema.plugin(mongoosePaginate)
 
 module.exports = {
-  mapleStory: mongoose.model('maplestory', maplestorySchema),
   free: mongoose.model('free', freeSchema),
   support: mongoose.model('support', freeSchema)
 }
