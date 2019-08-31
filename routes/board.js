@@ -15,26 +15,23 @@ moment.locale('ko')
 
 const config = require('../common/config.json')
 
-let Board
-let boardName
+let Board // mongoose model
+let boardConfig
+
 // URL 검증 & DB 설정
 function init (baseURL) {
-  for (const iterator of config.boardList) {
-    // board list에 있는 url만 접근을 허용
-    if (baseURL.slice(1) === iterator) {
+  for (const iterator of config.boardConfig) {
+    // config에 있는 url(boardConfig.board)만 접근을 허용
+    if (baseURL.slice(1) === iterator.board) {
+      // json 파일의 config 설정을 변수에 저장
+      boardConfig = iterator
       // url에 따라 model을 다르게 설정
-      switch (iterator) {
+      switch (iterator.board) {
         case 'free':
           Board = models.free
-          boardName = '자유'
-          break
-        case 'maplestory':
-          Board = models.mapleStory
-          boardName = '메이플스토리'
           break
         case 'support':
           Board = models.support
-          boardName = '건의사항'
           break
         default:
           break
@@ -89,7 +86,7 @@ router.get('/', async function (req, res, next) {
       user: req.user,
       moment: moment,
       countReply: countReply,
-      boardName: boardName
+      boardConfig: boardConfig
     })
   } catch (error) {
     console.log(error)

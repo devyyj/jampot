@@ -46,7 +46,14 @@ html
             if (user)
               a.nav-item.nav-link(href="/profile") 나의정보
               a.nav-item.nav-link(href="/logout") 로그아웃
+      if (user)
+        kbd #{user.nickname}
+        |님, 로그인 하셨습니다!
+      //- 본문
+      hr
       block content
+      hr
+      //- 본문 끝
       footer.py-3.bg-white.row.mt-3
         span.m-auto(style="font-size: 12px") Copyright 2019. YoungYong Jo. All Rights Reserved.
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

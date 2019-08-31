@@ -1,25 +1,20 @@
 extends layout
 
-block content
-  if (user)
-    p 
-      kbd #{user.nickname}
-      |님,
+block content  
   .card.border-info.mb-3
     .card-header
-      span.h4 #{boardName} 
+      span.h4 #{boardConfig.boardName} 
       |게시
       span.h4 팟 
-      |입니다!
     .card-body.text-info
-      h5.card-title Info card title
-      p.card-text Some quick example text to build on the card title and make up the bulk of the card's content.
+      //- h5.card-title Info card title
+      p.card-text #{boardConfig.boardDetail}
   button.btn.btn-sm.btn-primary(id='createPost' data-baseURL=baseURL value=user onclick='createPost()') 잼쓰기
   hr
   //- 베스트 게시물
   nav
     .nav.nav-tabs(id="nav-tab" role="tablist")
-      a.nav-item.nav-link.active(id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true") 주간 베스트 잼
+      a.nav-item.nav-link.active(id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true") 베스트 잼
       //- a.nav-item.nav-link(id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false") 이번 주
       //- a.nav-item.nav-link(id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false") 이번 달
   .tab-content(id="nav-tabContent")

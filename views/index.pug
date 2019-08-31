@@ -1,12 +1,6 @@
 extends layout
 
 block content
-  if (user)
-      kbd #{user.nickname}
-      |님, 하잇!
-  hr
-  a(href="/free") 자유 게시팟
-  br
-  a(href="/maplestory") 메이플스토리 게시팟
-  br
-  a(href="/support") 건의사항 게시팟
+  each val in boardConfig
+    a(href="/" + val.board) #{val.boardName} 게시팟
+    br

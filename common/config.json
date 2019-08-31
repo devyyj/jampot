@@ -1,3 +1,14 @@
 {
-  "boardList": ["free", "maplestory", "support"]
+  "boardConfig": [
+    {
+      "board": "free",
+      "boardName":"자유",
+      "boardDetail": "주제없이 자유롭게 쓰면 된다리"
+    },    
+    {
+      "board": "support",
+      "boardName":"건의",
+      "boardDetail": "건의 사항을 쓰면 된다리"
+    }
+  ]
 }

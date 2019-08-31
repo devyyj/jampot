@@ -4,8 +4,10 @@ const passport = require('passport')
 const User = require('../models/user')
 const url = require('url')
 
+const config = require('../common/config.json')
+
 router.get('/', function (req, res) {
-  return res.render('index', { user: req.user, title: '잼팟 - JAM in the POT' })
+  return res.render('index', { boardConfig: config.boardConfig, user: req.user, title: '잼팟 - JAM in the POT' })
 })
 
 // User 생성, 유저 생성, 회원 가입
