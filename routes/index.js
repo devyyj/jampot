@@ -45,6 +45,7 @@ router.post('/login', function (req, res, next) {
   passport.authenticate('local', function (err, user, info) {
     if (err) { return next(err) }
     if (!user) { return res.redirect('/login?result=fail') }
+    // 아이디 저장 기능
     if (req.body.rememberID) {
       const cookieOption = {
         path: '/login',
@@ -53,6 +54,7 @@ router.post('/login', function (req, res, next) {
       }
       res.cookie('rememberID', user.username, cookieOption)
     } else res.clearCookie('rememberID', { path: '/login' })
+    // 로그인하기 전 페이지로 리다이렉트
     req.logIn(user, function (err) {
       if (err) { return next(err) }
       const backURL = req.session.backURL || '/'
