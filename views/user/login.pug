@@ -7,8 +7,20 @@ block content
       if (err)
         p 로그인 실패!
       form.form-signin(action="/login" method="post")
-        input.text-lowercase.form-control(type='text' name="username" placeholder='아이디' required autofocus)
+        if (rememberID)
+          input.text-lowercase.form-control(value=rememberID type='text' name="username" placeholder='아이디' required autofocus)
+        else
+          input.text-lowercase.form-control(type='text' name="username" placeholder='아이디' required autofocus)
         input.form-control(type='password' name="password" placeholder='비밀번호' required)
+        .form-check
+          if (rememberID)
+            input.form-check-input(type="checkbox" id="rememberID" name='rememberID' checked)
+          else
+            input.form-check-input(type="checkbox" id="rememberID" name='rememberID')
+          label.form-check-label(for="rememberID") 아이디 기억하기
+        //- .form-check
+          input.form-check-input(type="checkbox" id="rememberMe" name='rememberMe')
+          label.form-check-label(for="rememberMe") 접속 유지하기
         button.btn.btn-outline-primary.btn-block(type='submit') 로그인
         button.btn.btn-outline-danger.btn-block.mt-1(type="button" onclick="location.href='javascript:history.back()'") 취소
         button.btn.btn-outline-secondary.btn-block.mt-1(type="button" onclick="location.href='/register'") 회원가입

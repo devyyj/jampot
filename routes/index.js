@@ -3,6 +3,7 @@ const router = express.Router()
 const passport = require('passport')
 const User = require('../models/user')
 const url = require('url')
+const moment = require('moment')
 
 const config = require('../common/config.json')
 
@@ -36,7 +37,7 @@ router.get('/login', function (req, res) {
       req.session.backURL = parseURL.href
     }
   }
-  res.render('user/login', { user: req.user, err: req.query.result })
+  res.render('user/login', { rememberID: req.cookies.rememberID, user: req.user, err: req.query.result })
 })
 
 // 로그인 처리
@@ -44,6 +45,14 @@ router.post('/login', function (req, res, next) {
   passport.authenticate('local', function (err, user, info) {
     if (err) { return next(err) }
     if (!user) { return res.redirect('/login?result=fail') }
+    if (req.body.rememberID) {
+      const cookieOption = {
+        path: '/login',
+        httpOnly: true,
+        expires: new Date(moment().add(1, 'years'))
+      }
+      res.cookie('rememberID', user.username, cookieOption)
+    } else res.clearCookie('rememberID', { path: '/login' })
     req.logIn(user, function (err) {
       if (err) { return next(err) }
       const backURL = req.session.backURL || '/'
