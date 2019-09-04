@@ -12,29 +12,7 @@ block content
   button.btn.btn-sm.btn-primary(id='createPost' data-baseURL=baseURL value=user onclick='createPost()') 잼쓰기
   hr
   //- 베스트 게시물
-  nav
-    .nav.nav-tabs(id="nav-tab" role="tablist")
-      a.nav-item.nav-link.active(id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true") 베스트 잼
-      //- a.nav-item.nav-link(id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false") 이번 주
-      //- a.nav-item.nav-link(id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false") 이번 달
-  .tab-content(id="nav-tabContent")
-    .tab-pane.fade.show.active(id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab")
-      table.table.table-hover.table-borderless(style='font-size: 12px')
-        tbody
-          each val, index in best
-            tr(onclick='tableRow('+ val.postNumber + ',"' + baseURL + '")' style="cursor: pointer;")
-              td
-                i.far.fa-thumbs-up.text-danger
-                =' '
-                span.text-danger #{val.like} 
-                =' '
-                =val.title
-                =' '
-                i.fas.fa-user-edit
-                =' '
-                span.user #{val.user.nickname}
-    //- .tab-pane.fade(id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab") 준비중..
-    //- .tab-pane.fade(id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab") 준비중..
+  include bestPost.pug
   //- 게시글 리스트
   table.table.table-hover.table-sm(style='font-size: 12px')
     tbody

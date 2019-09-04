@@ -41,7 +41,7 @@ const boardSchema = {
  * 게시판 늘리는 방법
  * 1.mongoose model을 추가
  * 2.config.json에 board config 추가
- *  이때, boardConfig.board와 사용할 baseURL을 같게 한다.
+ * 2-1.boardConfig.board, 게시판 baseURL, exports object의 key를 같게 한다.
  * 3.board.js에 init 함수 수정
  */
 const freeSchema = new mongoose.Schema(boardSchema)
@@ -54,5 +54,5 @@ supportSchema.plugin(mongoosePaginate)
 
 module.exports = {
   free: mongoose.model('free', freeSchema),
-  support: mongoose.model('support', freeSchema)
+  support: mongoose.model('support', supportSchema)
 }

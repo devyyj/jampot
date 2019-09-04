@@ -1,6 +1,22 @@
 extends layout
 
 block content
-  each val in boardConfig
-    a(href="/" + val.board) #{val.boardName} 게시팟
+  each val in boards
+    - var baseURL = val.baseURL
+    - var boardName = val.boardName
+    a(href="/" + baseURL) #{boardName} 게시팟 
+    span.text-danger #{val.newPost}
     br
+  hr
+  .row
+    each val in boards
+      - var best = val.best
+      - var baseURL = val.baseURL
+      - var boardName = val.boardName
+      .col-md
+        span.h4 #{boardName} 
+        |게시
+        span.h4 팟
+        include bestPost.pug
+  script(src="/javascripts/board.js")
+  script(src="/javascripts/pullToRefresh.js")

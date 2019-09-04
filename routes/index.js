@@ -4,11 +4,37 @@ const passport = require('passport')
 const User = require('../models/user')
 const url = require('url')
 const moment = require('moment')
-
 const config = require('../common/config.json')
+const models = require('../models/board')
+const { queryBestPost } = require('../common/common')
 
-router.get('/', function (req, res) {
-  return res.render('index', { boardConfig: config.boardConfig, user: req.user, title: '잼팟 - JAM in the POT' })
+router.get('/test', function (req, res) {
+  res.render('test')
+})
+
+router.get('/', async function (req, res) {
+  const boards = []
+  // 메인 화면에 출력할 베스트 게시물 쿼리
+  for (const key in models) {
+    // eslint-disable-next-line no-prototype-builtins
+    if (models.hasOwnProperty(key)) {
+      const model = models[key]
+      const best = {}
+      best.best = await queryBestPost(model)
+      // 게시판 baseURL을 얻을 수 없기 때문에 key를 사용
+      best.baseURL = key
+      // baord Name 설정
+      for (const iterator of config.boardConfig) {
+        if (iterator.board === best.baseURL) best.boardName = iterator.boardName
+      }
+      // 오늘 생성된 게시글의 수
+      const start = moment().startOf('day')
+      const end = moment().endOf('day')
+      best.newPost = await model.find({ createTime: { $gte: start, $lt: end } }).count()
+      boards.push(best)
+    }
+  }
+  return res.render('index', { boards: boards, user: req.user, title: '잼팟 - JAM in the POT' })
 })
 
 // User 생성, 유저 생성, 회원 가입

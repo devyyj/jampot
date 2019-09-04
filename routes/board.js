@@ -4,10 +4,9 @@ const models = require('../models/board')
 const User = require('../models/user')
 const url = require('url')
 const { uploadFile, deleteFile } = require('../common/aws-s3')
-
+const { queryBestPost } = require('../common/common')
 const multer = require('multer')
 const upload = multer({ dest: 'uploads/' })
-
 const moment = require('moment')
 require('moment-timezone')
 moment.tz.setDefault('Asia/Seoul')
@@ -49,10 +48,6 @@ router.use('/', function (req, res, next) {
   else return res.sendStatus(404)
 })
 
-router.get('/test', function (req, res) {
-  res.render('test')
-})
-
 // 댓댓글 카운트, 총 댓글 수를 계산하기 위함
 function countReply (params) {
   let count = 0
@@ -66,11 +61,7 @@ function countReply (params) {
 router.get('/', async function (req, res, next) {
   try {
     // 베스트 게시글 쿼리
-    const start = moment().startOf('week')
-    const end = moment().endOf('week')
-    const best = await Board.find({ createTime: { $gte: start, $lt: end }, like: { $gt: 0 } })
-      .sort({ like: -1, postNumber: -1 })
-      .limit(5).populate('user')
+    const best = await queryBestPost(Board)
     // 전체 게시글 쿼리 with paginate
     const opt = {
       sort: { postNumber: -1 },
