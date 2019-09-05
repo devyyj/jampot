@@ -85,6 +85,20 @@ router.get('/', async function (req, res, next) {
   }
 })
 
+// 목록 이동
+router.get('/list', async function (req, res, next) {
+  try {
+    const limit = 10
+    const count = await Board.find({ postNumber: { $gte: req.query.postNumber } }).countDocuments()
+    let page = parseInt(count / limit)
+    if (count % limit > 0) ++page
+    res.redirect(req.baseUrl + '?page=' + page)
+  } catch (error) {
+    console.log(error)
+    next({ message: '알 수 없는 오류가 발생했습니다.' })
+  }
+})
+
 // 연속 게시글 작성 불가 기능
 async function preventCreatePost (username) {
   const prev = await Board.findOne({}).sort({ _id: -1 }).populate('user')

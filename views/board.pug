@@ -65,11 +65,11 @@ block content
       //- 이전 버튼
       if data.hasPrevPage
         li.page-item
-          a.page-link(href=baseURL+"/?page="+data.prevPage aria-label="Previous")
+          a.page-link(href=baseURL+"?page="+data.prevPage aria-label="Previous")
             span(aria-hidden="true") Prev
       else
         li.page-item.disabled
-          a.page-link(href=baseURL+"/?page="+data.prevPage aria-label="Previous")
+          a.page-link(href=baseURL+"?page="+data.prevPage aria-label="Previous")
             span(aria-hidden="true") Prev
       //- 페이지 번호
       li.page-item
@@ -81,11 +81,11 @@ block content
       //- 다음 버튼
       if data.hasNextPage
         li.page-item
-          a.page-link(href=baseURL+"/?page="+data.nextPage aria-label="Next")
+          a.page-link(href=baseURL+"?page="+data.nextPage aria-label="Next")
             span(aria-hidden="true") Next
       else
         li.page-item.disabled
-          a.page-link(href=baseURL+"/?page="+data.nextPage aria-label="Next")
+          a.page-link(href=baseURL+"?page="+data.nextPage aria-label="Next")
             span(aria-hidden="true") Next
   p.text-center * Total #{data.totalPages} pages
 

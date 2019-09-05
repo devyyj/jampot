@@ -213,7 +213,8 @@ block content
     div
       i.far.fa-thumbs-down 
   = ' '
-  button.btn.btn-secondary(type="button" onclick="location.href='" + baseURL + "'") 목록
+  //- 목록
+  button.btn.btn-secondary(type="button" onclick="location.href='" + baseURL + "/list?postNumber=" + data.postNumber + "'") 목록
   = ' '
   //- 게시글 작성자와 현재 접속자가 같으면 수정/삭제 버튼을 생성
   if(user)
