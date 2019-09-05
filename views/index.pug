@@ -7,6 +7,7 @@ block content
     a(href="/" + baseURL) #{boardName} 게시팟 
     span.text-danger #{val.newPost}
     br
+  span.text-danger(style='font-size:12px') * 빨간 숫자는 오늘 올라온 게시글 수입니닷!
   hr
   .row
     each val in boards
@@ -14,9 +15,10 @@ block content
       - var baseURL = val.baseURL
       - var boardName = val.boardName
       .col-md
-        span.h4 #{boardName} 
-        |게시
-        span.h4 팟
+        a(href="/" + baseURL)
+          span.h4 #{boardName} 
+          |게시
+          span.h4 팟
         include bestPost.pug
   script(src="/javascripts/board.js")
   script(src="/javascripts/pullToRefresh.js")

@@ -3,9 +3,10 @@ extends layout
 block content  
   .card.border-info.mb-3
     .card-header
-      span.h4 #{boardConfig.boardName} 
-      |게시
-      span.h4 팟 
+      a(href=baseURL)
+        span.h4 #{boardConfig.boardName} 
+        |게시
+        span.h4 팟 
     .card-body.text-info
       //- h5.card-title Info card title
       p.card-text #{boardConfig.boardDetail}
@@ -26,6 +27,7 @@ block content
             else
               =val.postNumber
           td
+            //- 제목
             div(style='font-size: 16px; white-space: pre-wrap;')
               =val.title
             .row
@@ -36,26 +38,31 @@ block content
                 span.user #{val.user.nickname}
                 =' '
               .col-auto
+                //- 시간
                 i.far.fa-clock
                 =' ' 
                 |#{moment(val.createTime).fromNow()}
             .row
               .col-auto
+                //- 추천 아이콘
                 i.far.fa-thumbs-up
                 =' '
                 span.text-danger #{val.like} 
                 =' '
               .col-auto
+                //- 반대 아이콘
                 i.far.fa-thumbs-down 
                 =' '
                 span.text-primary #{val.disLike}
                 =' '
               .col-auto
+                //- 조회수 아이콘
                 i.far.fa-eye
                 =' '
                 |#{val.hits}
                 =' '
               .col-auto
+                //- 댓글 아이콘
                 i.far.fa-comment
                 =' '
                 |#{val.comments.length + countReply(val.comments)}
