@@ -30,7 +30,7 @@ router.get('/', async function (req, res) {
       // 오늘 생성된 게시글의 수
       const start = moment().startOf('day')
       const end = moment().endOf('day')
-      best.newPost = await model.find({ createTime: { $gte: start, $lt: end } }).count()
+      best.newPost = await model.find({ createTime: { $gte: start, $lt: end } }).countDocuments()
       boards.push(best)
     }
   }

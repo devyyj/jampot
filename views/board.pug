@@ -61,25 +61,33 @@ block content
                 |#{val.comments.length + countReply(val.comments)}
   //- 페이지네이션
   nav(aria-label="Page navigation example")
-    ul.pagination.pagination-sm.justify-content-center
+    ul.pagination.justify-content-center
+      //- 이전 버튼
       if data.hasPrevPage
         li.page-item
           a.page-link(href=baseURL+"/?page="+data.prevPage aria-label="Previous")
-            span(aria-hidden="true") &laquo;
+            span(aria-hidden="true") Prev
       else
         li.page-item.disabled
           a.page-link(href=baseURL+"/?page="+data.prevPage aria-label="Previous")
-            span(aria-hidden="true") &laquo;
+            span(aria-hidden="true") Prev
+      //- 페이지 번호
       li.page-item
-        a.page-link #{data.page} / #{data.totalPages}
+        .input-group
+          input.form-control.text-center(id='page' style='width:60px' type="text" value=data.page)
+          .input-group-append
+            button.btn.btn-outline-secondary(id='goPage' type="button" data-baseURL=baseURL
+              onclick='goPage('+data.totalPages+')') Go
+      //- 다음 버튼
       if data.hasNextPage
         li.page-item
-        a.page-link(href=baseURL+"/?page="+data.nextPage aria-label="Next")
-          span(aria-hidden="true") &raquo;  
+          a.page-link(href=baseURL+"/?page="+data.nextPage aria-label="Next")
+            span(aria-hidden="true") Next
       else
         li.page-item.disabled
           a.page-link(href=baseURL+"/?page="+data.nextPage aria-label="Next")
-            span(aria-hidden="true") &raquo;
+            span(aria-hidden="true") Next
+  p.text-center * Total #{data.totalPages} pages
 
   include askLogin.pug
   script(src="/javascripts/board.js")
