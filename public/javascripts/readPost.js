@@ -110,3 +110,25 @@ window.addEventListener('load', function () {
   // eslint-disable-next-line no-undef
   preventSuccessiveClick('createReply', 'submitReply', true)
 })
+
+// 좋아요 기능
+function likePost (disLike = false) {
+  var xhttp = new XMLHttpRequest()
+  let ID
+  if (disLike) ID = 'disLike'
+  else ID = 'like'
+  const el = document.getElementById(ID)
+  if (el.getAttribute('data-user') === null && disLike === true) {
+    $('#askLogin').modal('show')
+  } else {
+    xhttp.onreadystatechange = function () {
+      if (this.readyState === 4 && this.status === 200) {
+        alert(this.response)
+      }
+    }
+    const baseURL = el.getAttribute('data-baseURL')
+    const URL = baseURL + '/likePost?postNumber=' + el.value + '&disLike=' + disLike
+    xhttp.open('GET', URL, true)
+    xhttp.send()
+  }
+}

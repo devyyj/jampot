@@ -91,7 +91,7 @@ router.get('/list', async function (req, res, next) {
     const limit = 10
     const count = await Board.find({ postNumber: { $gte: req.query.postNumber } }).countDocuments()
     let page = parseInt(count / limit)
-    if (count % limit > 0) ++page
+    if (count % limit > 0)++page
     res.redirect(req.baseUrl + '?page=' + page)
   } catch (error) {
     console.log(error)
@@ -263,27 +263,34 @@ router.get('/deletePost', async function (req, res, next) {
 })
 
 // 추천 반대 처리
-router.get('/likePost', async function (req, res) {
-  if (req.user !== undefined) {
-    let msg
-    const voteResult = await Board.findOne({
-      postNumber: req.query.postNumber,
-      voteList: req.user.username
-    })
-    if (voteResult) msg = '이미 추천/반대하셨읍니다.'
-    else {
-      let inc
-      if (req.query.disLike === 'true') {
-        msg = '반대하셨읍니다!'
-        inc = { disLike: 1 }
-      } else {
-        msg = '추천하셨읍니다!'
-        inc = { like: 1 }
+router.get('/likePost', async function (req, res, next) {
+  try {
+    if (req.user === undefined && req.query.disLike === 'true') {
+      res.redirect('/login')
+    } else {
+      let msg
+      const voteResult = await Board.findOne({
+        postNumber: req.query.postNumber,
+        voteList: req.ip
+      })
+      if (voteResult) msg = '이미 추천/반대하셨읍니다.'
+      else {
+        let inc
+        if (req.query.disLike === 'true') {
+          msg = '반대하셨읍니다!'
+          inc = { disLike: 1 }
+        } else {
+          msg = '추천하셨읍니다!'
+          inc = { like: 1 }
+        }
+        await Board.updateOne({ postNumber: req.query.postNumber },
+          { $inc: inc, $push: { voteList: req.ip } })
       }
-      await Board.updateOne({ postNumber: req.query.postNumber },
-        { $inc: inc, $push: { voteList: req.user.username } })
+      res.send(msg)
     }
-    res.send(msg)
+  } catch (error) {
+    console.log(error)
+    next({ message: '알 수 없는 오류가 발생했습니다.' })
   }
 })
 
