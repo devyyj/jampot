@@ -28,40 +28,35 @@ block content
               =val.postNumber
           td
             //- 제목
-            div(style='font-size: 16px; white-space: pre-wrap;')
-              =val.title
             .row
-              .col-auto
+              .col-md-6(style='font-size: 16px; white-space: pre-wrap;')
+                =val.title
+              .col-md-3
                 //- 닉네임
                 i.fas.fa-user-edit
                 =' '
                 span.user #{val.user.nickname}
                 =' '
-              .col-auto
                 //- 시간
                 i.far.fa-clock
                 =' ' 
                 |#{moment(val.createTime).fromNow()}
-            .row
-              .col-auto
+              .col-md-3
                 //- 추천 아이콘
                 i.far.fa-thumbs-up
                 =' '
                 span.text-danger #{val.like} 
                 =' '
-              .col-auto
                 //- 반대 아이콘
                 i.far.fa-thumbs-down 
                 =' '
                 span.text-primary #{val.disLike}
                 =' '
-              .col-auto
                 //- 조회수 아이콘
                 i.far.fa-eye
                 =' '
                 |#{val.hits}
                 =' '
-              .col-auto
                 //- 댓글 아이콘
                 i.far.fa-comment
                 =' '
