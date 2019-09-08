@@ -265,13 +265,16 @@ router.get('/deletePost', async function (req, res, next) {
 // 추천 반대 처리
 router.get('/likePost', async function (req, res, next) {
   try {
+    let ip
+    if (req.headers['x-forwarded-for']) ip = req.headers['x-forwarded-for'].split(',')[0]
+    else ip = req.connection.remoteAddress
     if (req.user === undefined && req.query.disLike === 'true') {
       res.redirect('/login')
     } else {
       let msg
       const voteResult = await Board.findOne({
         postNumber: req.query.postNumber,
-        voteList: req.ip
+        voteList: ip
       })
       if (voteResult) msg = '이미 추천/반대하셨읍니다.'
       else {
@@ -284,7 +287,7 @@ router.get('/likePost', async function (req, res, next) {
           inc = { like: 1 }
         }
         await Board.updateOne({ postNumber: req.query.postNumber },
-          { $inc: inc, $push: { voteList: req.ip } })
+          { $inc: inc, $push: { voteList: ip } })
       }
       res.send(msg)
     }
