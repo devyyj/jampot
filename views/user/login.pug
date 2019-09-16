@@ -5,7 +5,7 @@ block content
     .m-auto.text-center
       h1 로그인
       if (err)
-        p 로그인 실패!
+        span.text-danger 로그인 실패!
       form.form-signin(action="/login" method="post")
         if (rememberID)
           input.text-lowercase.form-control(value=rememberID type='text' name="username" placeholder='아이디' required autofocus)
@@ -23,6 +23,7 @@ block content
           label.form-check-label(for="rememberMe") 접속 유지하기
         button.btn.btn-outline-primary.btn-block(type='submit') 로그인
         button.btn.btn-outline-danger.btn-block.mt-1(type="button" onclick="location.href='javascript:history.back()'") 취소
+        button.btn.btn-outline-info.btn-block.mt-1(type="button" onclick="location.href='#'") 아이디/비밀번호 찾기
         button.btn.btn-outline-secondary.btn-block.mt-1(type="button" onclick="location.href='/register'") 회원가입
 
         
