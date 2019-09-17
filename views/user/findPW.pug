@@ -1,0 +1,14 @@
+extends ../layout
+
+block content
+  form(action="/findpw" method="post")
+    .form-group.row
+      label.col-sm-2.col-form-label 아이디/비밀번호 찾기
+      .col
+        input.form-control(type="email" placeholder="이메일 입력" name="email" required
+          autofocus pattern="\\S+@\\S+\\.\\S+")
+        small.form-text.text-muted 나의 정보에 기록된 이메일을 입력해 주세요!
+    .form-group.row
+      label.col-sm-2.col-form-label
+      .col
+        button.btn.btn-outline-primary(type='submit') 이메일 발송

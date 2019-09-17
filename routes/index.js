@@ -7,9 +7,11 @@ const moment = require('moment')
 const config = require('../common/config.json')
 const models = require('../models/board')
 const { queryBestPost } = require('../common/common')
+const sendMail = require('../common/aws-ses')
 
-router.get('/test', function (req, res) {
-  res.render('test')
+router.get('/test', async function (req, res) {
+  await sendMail('devyyj@gmail.com', 'test subject', 'test body')
+  res.send('test')
 })
 
 router.get('/', async function (req, res) {
@@ -42,16 +44,26 @@ router.get('/register', function (req, res) {
   res.render('user/register', { user: req.user })
 })
 
-router.post('/register', function (req, res) {
-  User.register(new User({ username: req.body.username, nickname: req.body.nickname }),
-    req.body.password, function (err, User) {
-      if (err) {
-        return res.render('register', { user: req.user, err: err })
-      }
-      passport.authenticate('local')(req, res, function () {
-        res.redirect('/')
+router.post('/register', function (req, res, next) {
+  try {
+    User.register(new User({ username: req.body.username, nickname: req.body.nickname, email: req.body.email }),
+      req.body.password, function (error, User) {
+        if (error) {
+          let message
+          console.log(error)
+          if (error.code === 11000) message = '닉네임 또는 이메일이 중복됩니다.' + error.message
+          else if (error.name === 'UserExistsError') message = '아이디가 중복됩니다.'
+          else message = '알 수 없는 오류가 발생했습니다.'
+          next({ message: message })
+        } else {
+          passport.authenticate('local')(req, res, function () {
+            res.redirect('/')
+          })
+        }
       })
-    })
+  } catch (error) {
+    console.log(error)
+  }
 })
 
 // 로그인 화면
@@ -119,14 +131,64 @@ router.post('/profile', async function (req, res, next) {
     if (authResult.error) res.render('warning', { user: req.user, message: '비밀번호가 일치하지 않습니다.' })
     else {
       result.nickname = req.body.nickname
+      result.email = req.body.email
       if (req.body.newpassword) await result.changePassword(req.body.oldpassword, req.body.newpassword)
       await result.save()
       res.redirect('/')
     }
   } catch (error) {
     console.log(error)
-    if (error.code === 11000) next({ message: '중복 되는 닉네임 입니다.' })
+    if (error.code === 11000) next({ message: '닉네임 또는 이메일이 중복됩니다.' + error.message })
     else next({ message: '알 수 없는 오류가 발생했습니다.' })
+  }
+})
+
+// 아이디 패스워드 찾기 화면
+router.get('/findpw', function (req, res, next) {
+  res.render('user/findPW', { user: req.user })
+})
+
+// 아이디 패스워드 찾기 메일 발송
+router.post('/findpw', async function (req, res, next) {
+  try {
+    const authcode = Date.now()
+    await User.findOneAndUpdate({ email: req.body.email }, { authcode: authcode })
+    const body = `
+    비밀번호를 변경하려면 다음 링크를 클릭하세요.
+    https://jampot.kr/changepw?authcode=${authcode}
+    다른 사람에게 링크를 공유하지 마세요!
+    `
+    await sendMail(req.body.email, '잼팟 아이디/비밀번호 찾기', body)
+    res.render('warning', { message: req.body.email + '로 메일을 보냈읍니다!' })
+  } catch (error) {
+    console.log(error)
+    next({ message: '알 수 없는 오류가 발생했습니다.' })
+  }
+})
+
+// 패스워드 변경 페이지
+router.get('/changepw', async function (req, res, next) {
+  try {
+    const result = await User.findOne({ authcode: req.query.authcode })
+    if (result) res.render('user/changePW', { data: result })
+    else next({ message: '비정상적인 접근입니다.' })
+  } catch (error) {
+    console.log(error)
+    next({ message: '알 수 없는 오류가 발생했습니다.' })
+  }
+})
+
+// 비밀번호 재설정
+router.post('/changepw', async function (req, res, next) {
+  try {
+    const result = await User.findOne({ authcode: req.query.authcode })
+    await result.setPassword(req.body.newpassword)
+    result.authcode = ''
+    await result.save()
+    res.redirect('/')
+  } catch (error) {
+    console.log(error)
+    next({ message: '알 수 없는 오류가 발생했습니다.' })
   }
 })
 

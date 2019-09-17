@@ -1,0 +1,24 @@
+extends ../layout
+
+block content
+  form.needs-validation(action="/changepw?authcode="+data.authcode method="post" novalidate)
+    .form-group.row
+      label.col-sm-2.col-form-label 아이디
+      .col
+        input.form-control.text-lowercase(value=data.username disabled)
+    .form-group.row
+      label.col-sm-2.col-form-label 비밀번호 재설정
+      .col
+        input.form-control(type="password" placeholder="새 비밀번호 입력" name="newpassword" id='pw1'
+          pattern="^(?=.*?[a-z])(?=.*?[0-9]).{8,}$")
+        input.mt-1.form-control(type="password" placeholder="새 비밀번호 확인" name="newpassword2" id='pw2'
+          pattern="^(?=.*?[a-z])(?=.*?[0-9]).{8,}$")
+        .invalid-feedback(id='feedback')
+        small.form-text.text-muted 최소 하나 이상의 영문자 숫자 조합. (최소 길이 8)
+    hr
+    .form-group.row
+      label.col-sm-2.col-form-label
+      .col
+        button.btn.btn-outline-primary(type='submit') 비밀번호 재설정
+  
+  script(src="/javascripts/register.js")

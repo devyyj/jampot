@@ -5,12 +5,17 @@ block content
     .form-group.row
       label.col-sm-2.col-form-label 아이디
       .col
-        input.form-control.text-lowercase(placeholder=data.username disabled)
+        input.form-control.text-lowercase(value=data.username disabled)
     .form-group.row
       label.col-sm-2.col-form-label 닉네임
       .col
         input.form-control.text-lowercase(value=data.nickname name='nickname' required maxlength="8" pattern="[ㄱ-ㅎ가-힣a-zA-Z0-9]{2,8}")
         small.form-text.text-muted 한글 영문자 숫자 조합. (길이 2 ~ 8)
+    .form-group.row
+      label.col-sm-2.col-form-label 이메일
+      .col
+        input.form-control.text-lowercase(value=data.email name='email' required pattern="\\S+@\\S+\\.\\S+")
+        small.form-text.text-muted 이메일은 아이디/비밀번호 찾기에 사용됩니다. 정확하게 입력해주세요!
     .form-group.row
       label.col-sm-2.col-form-label 비밀번호
       .col
@@ -35,5 +40,4 @@ block content
         button.btn.btn-outline-danger(type='button' onclick="location.href='javascript:history.back()'") 취소
   if (err)
     p.text-danger #{err}
-
   script(src="/javascripts/register.js")

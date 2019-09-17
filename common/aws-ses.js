@@ -1,52 +1,37 @@
 // Load the AWS SDK for Node.js
 var AWS = require('aws-sdk')
-// Set the region
-AWS.config.update({ region: 'us-west-2' })
+const proxy = require('proxy-agent')
 
-// Create sendEmail params
-var params = {
-  Destination: { /* required */
-    // CcAddresses: [
-    //   'EMAIL_ADDRESS',
-    //   /* more items */
-    // ],
-    ToAddresses: [
-      'devyyj@gmail.com',
-      /* more items */
-    ]
-  },
-  Message: { /* required */
-    Body: { /* required */
-      // Html: {
-      //   Charset: 'UTF-8',
-      //   Data: 'HTML_FORMAT_BODY'
-      // },
-      Text: {
-        Charset: 'UTF-8',
-        Data: 'Test email body'
-      }
-    },
-    Subject: {
-      Charset: 'UTF-8',
-      Data: 'Test email'
+// Set the region
+AWS.config.update({
+  region: 'us-west-2'
+  // , httpOptions: { agent: proxy('http://210.112.194.110:3128') }
+})
+
+const ses = new AWS.SES({ apiVersion: '2010-12-01' })
+
+async function sendMail (to, subject, body) {
+  try {
+    var params = {
+      Destination: { ToAddresses: [to] },
+      Message: {
+        Body: {
+          Text: {
+            Charset: 'UTF-8',
+            Data: body
+          }
+        },
+        Subject: {
+          Charset: 'UTF-8',
+          Data: subject
+        }
+      },
+      Source: 'jampot@jampot.kr'
     }
-  },
-  Source: 'jampot@jampot.kr', /* required */
-  // ReplyToAddresses: [
-  //   'EMAIL_ADDRESS',
-  //   /* more items */
-  // ],
+    await ses.sendEmail(params).promise()
+  } catch (error) {
+    console.error(error, error.stack)
+  }
 }
 
-// Create the promise and SES service object
-var sendPromise = new AWS.SES({ apiVersion: '2010-12-01' }).sendEmail(params).promise()
-
-// Handle promise's fulfilled/rejected states
-// sendPromise.then(
-//   function (data) {
-//     console.log(data.MessageId)
-//   }).catch(function (err) {
-//     console.error(err, err.stack)
-//   })
-
-module.exports = sendPromise
+module.exports = sendMail
