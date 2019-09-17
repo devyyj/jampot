@@ -41,18 +41,19 @@ block content
   hr.row
   //- 게시글 내용
   div(style="white-space: pre-wrap;")
-    //- 첨부파일
     if(data.uploadFiles[0])
       .text-center(id="file")
+        //- 원본 보기 버튼
+        button.btn.btn-outline-secondary.btn-sm(type="button" id="original"
+          value=data.uploadFiles[0].originalFileURL data-size=data.uploadFiles[0].originalFileSize)
+        br
+        //- 첨부파일
         if(data.uploadFiles[0].video)
           video(id="resize" style="max-width: 100%;" loop controls autoplay playsinline webkit-playsinline)
             source(src=data.uploadFiles[0].resizeFileURL, type="video/mp4")
             |Your browser does not support the video tag.
         else
           img.border(id="resize" style="max-width:100%;" src=data.uploadFiles[0].resizeFileURL alt="" )
-        br
-        button.btn.btn-outline-secondary.btn-sm(type="button" id="original"
-          value=data.uploadFiles[0].originalFileURL data-size=data.uploadFiles[0].originalFileSize)
     //- 본문
     |#{data.content}
   hr.row
