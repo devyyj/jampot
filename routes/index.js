@@ -151,7 +151,8 @@ router.get('/findpw', function (req, res, next) {
 router.post('/findpw', async function (req, res, next) {
   try {
     const authcode = Date.now()
-    await User.findOneAndUpdate({ email: req.body.email }, { authcode: authcode })
+    const result = await User.findOneAndUpdate({ email: req.body.email }, { authcode: authcode })
+    if (result === null) return next({ message: '해당 이메일로 등록된 아이디가 없습니다.' })
     const body = `
     비밀번호를 변경하려면 다음 링크를 클릭하세요.
     https://jampot.kr/changepw?authcode=${authcode}
@@ -168,6 +169,7 @@ router.post('/findpw', async function (req, res, next) {
 // 패스워드 변경 페이지
 router.get('/changepw', async function (req, res, next) {
   try {
+    if (req.query.authcode === '') next({ message: '비정상적인 접근입니다.' })
     const result = await User.findOne({ authcode: req.query.authcode })
     if (result) res.render('user/changePW', { data: result })
     else next({ message: '비정상적인 접근입니다.' })
