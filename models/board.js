@@ -52,7 +52,12 @@ const supportSchema = new mongoose.Schema(boardSchema)
 supportSchema.plugin(mai.plugin, { model: 'support', field: 'postNumber', startAt: 1 })
 supportSchema.plugin(mongoosePaginate)
 
+const noticeSchema = new mongoose.Schema(boardSchema)
+noticeSchema.plugin(mai.plugin, { model: 'notice', field: 'postNumber', startAt: 1 })
+noticeSchema.plugin(mongoosePaginate)
+
 module.exports = {
+  notice: mongoose.model('notice', noticeSchema),
   free: mongoose.model('free', freeSchema),
   support: mongoose.model('support', supportSchema)
 }

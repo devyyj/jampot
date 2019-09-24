@@ -1,13 +1,19 @@
 {
   "boards": [
     {
+      "url": "notice",
+      "name": "공지",
+      "detail": "필독을 부탁드립니당",
+      "onlyAdmin": true
+    },
+    {
       "url": "free",
-      "name":"자유",
+      "name": "자유",
       "detail": "주제없이 자유롭게 쓰면 된다리"
-    },    
+    },
     {
       "url": "support",
-      "name":"건의",
+      "name": "건의",
       "detail": "건의 사항을 쓰면 된다리"
     }
   ]

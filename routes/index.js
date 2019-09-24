@@ -127,7 +127,7 @@ router.post('/profile', async function (req, res, next) {
   try {
     const result = await User.findOne({ username: req.user.username })
     const authResult = await result.authenticate(req.body.oldpassword)
-    if (authResult.error) res.render('warning', { user: req.user, message: '비밀번호가 일치하지 않습니다.' })
+    if (authResult.error) next({ user: req.user, message: '비밀번호가 일치하지 않습니다.' })
     else {
       result.nickname = req.body.nickname
       result.email = req.body.email
@@ -159,7 +159,7 @@ router.post('/findpw', async function (req, res, next) {
     다른 사람에게 링크를 공유하지 마세요!
     `
     await sendMail(req.body.email, '잼팟 아이디/비밀번호 찾기', body)
-    res.render('warning', { message: req.body.email + '로 메일을 보냈읍니다!' })
+    next({ message: req.body.email + '로 메일을 보냈읍니다!' })
   } catch (error) {
     console.log(error)
     next({ message: '알 수 없는 오류가 발생했습니다.' })

@@ -32,6 +32,9 @@ function init (baseURL) {
         case 'support':
           Board = models.support
           break
+        case 'notice':
+          Board = models.notice
+          break
         default:
           break
       }
@@ -111,12 +114,13 @@ async function limitCreatePost (username) {
 }
 
 // 새글 작성 화면
-router.get('/createPost', async function (req, res) {
+router.get('/createPost', async function (req, res, next) {
   if (req.user === undefined) {
     res.redirect('/login')
   } else {
+    if (boardConfig.onlyAdmin && req.user.username !== 'master') return next({ message: '공지 잼쓰기는 관리자만 가능합니다.' })
     const countDown = await limitCreatePost(req.user.username)
-    if (countDown) return res.render('warning', { user: req.user, message: '연속으로 글을 작성할 수 없습니다.', countDown })
+    if (countDown) return next({ user: req.user, message: '연속으로 글을 작성할 수 없습니다.', countDown })
   }
   res.render('createPost', { baseURL: req.baseUrl, user: req.user, data: {} })
 })
@@ -171,7 +175,7 @@ router.post('/createPost', upload.single('uploadFile'), async function (req, res
     } else {
       // 새글 업로드
       const countDown = await limitCreatePost(req.user.username)
-      if (countDown) return res.render('warning', { user: req.user, message: '연속으로 글을 작성할 수 없습니다.', countDown })
+      if (countDown) return next({ user: req.user, message: '연속으로 글을 작성할 수 없습니다.', countDown })
       // 게시글 저장
       const user = await User.findOne({ username: req.user.username })
       // 게시글 작성 시간 저장
@@ -228,7 +232,7 @@ router.get('/updatePost', async function (req, res, next) {
     } else {
       const result = await Board.findOne({ postNumber: req.query.postNumber }).populate('user')
       if (result.user.nickname !== req.user.nickname) {
-        res.render('warning', { user: req.user, message: '권한이 없읍니다.' })
+        next({ user: req.user, message: '권한이 없읍니다.' })
       } else {
         res.render('createPost', { baseURL: req.baseUrl, user: req.user, data: result })
       }
@@ -250,7 +254,7 @@ router.get('/deletePost', async function (req, res, next) {
       if (result.uploadFiles.length) await resetUploadFile(result)
 
       if (result.user.nickname !== req.user.nickname) {
-        res.render('warning', { user: req.user, message: '권한이 없읍니다.' })
+        next({ user: req.user, message: '권한이 없읍니다.' })
       } else {
         result.delete({ postNumber: req.query.postNumber })
         res.redirect(req.baseUrl)

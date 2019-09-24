@@ -1,4 +1,4 @@
-var createError = require('http-errors')
+// var createError = require('http-errors')
 var express = require('express')
 var path = require('path')
 var cookieParser = require('cookie-parser')
@@ -46,7 +46,7 @@ app.use('/:pot', boardRouter)
 
 // 에러 처리
 app.use(function (err, req, res, next) {
-  res.render('warning', { message: err.message })
+  res.render('warning', { user: err.user, message: err.message, countDown: err.countDown })
 })
 
 // // catch 404 and forward to error handler
