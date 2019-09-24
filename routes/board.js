@@ -19,13 +19,13 @@ let boardConfig
 
 // URL 검증 & DB 설정
 function init (baseURL) {
-  for (const iterator of config.boardConfig) {
-    // config에 있는 url(boardConfig.board)만 접근을 허용
-    if (baseURL.slice(1) === iterator.board) {
+  for (const board of config.boards) {
+    // config에 있는 board url만 접근을 허용
+    if (baseURL.slice(1) === board.url) {
       // json 파일의 config 설정을 변수에 저장
-      boardConfig = iterator
+      boardConfig = board
       // url에 따라 model을 다르게 설정
-      switch (iterator.board) {
+      switch (board.url) {
         case 'free':
           Board = models.free
           break
@@ -100,7 +100,7 @@ router.get('/list', async function (req, res, next) {
 })
 
 // 연속 게시글 작성 불가 기능
-async function preventCreatePost (username) {
+async function limitCreatePost (username) {
   const prev = await Board.findOne({}).sort({ _id: -1 }).populate('user')
   if (prev && prev.user.username === username) {
     const result = await User.findOne({ username: username })
@@ -115,7 +115,7 @@ router.get('/createPost', async function (req, res) {
   if (req.user === undefined) {
     res.redirect('/login')
   } else {
-    const countDown = await preventCreatePost(req.user.username)
+    const countDown = await limitCreatePost(req.user.username)
     if (countDown) return res.render('warning', { user: req.user, message: '연속으로 글을 작성할 수 없습니다.', countDown })
   }
   res.render('createPost', { baseURL: req.baseUrl, user: req.user, data: {} })
@@ -170,7 +170,7 @@ router.post('/createPost', upload.single('uploadFile'), async function (req, res
       res.redirect(req.baseUrl + '/readPost?postNumber=' + req.query.postNumber)
     } else {
       // 새글 업로드
-      const countDown = await preventCreatePost(req.user.username)
+      const countDown = await limitCreatePost(req.user.username)
       if (countDown) return res.render('warning', { user: req.user, message: '연속으로 글을 작성할 수 없습니다.', countDown })
       // 게시글 저장
       const user = await User.findOne({ username: req.user.username })

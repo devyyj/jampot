@@ -3,5 +3,9 @@ extends layout
 block content
   p #{message}
   if (countDown)
-    p 남은 시간 : #{countDown.minutes()}분 #{countDown.seconds()}초
+    span(id='count' data=countDown.seconds()) #{countDown.seconds()}
+    span 초 뒤에 잼쓰기 화면으로 이동합니다!
+    script(src="/javascripts/warning.js")
+    br
+    br
   button(type="button", onclick="location.href='javascript:history.back()'") 뒤로가기

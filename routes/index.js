@@ -10,8 +10,7 @@ const { queryBestPost } = require('../common/common')
 const sendMail = require('../common/aws-ses')
 
 router.get('/test', async function (req, res) {
-  await sendMail('devyyj@gmail.com', 'test subject', 'test body')
-  res.send('test')
+  res.render('test')
 })
 
 router.get('/', async function (req, res) {
@@ -26,8 +25,8 @@ router.get('/', async function (req, res) {
       // 게시판 baseURL을 얻을 수 없기 때문에 key를 사용
       best.baseURL = key
       // baord Name 설정
-      for (const iterator of config.boardConfig) {
-        if (iterator.board === best.baseURL) best.boardName = iterator.boardName
+      for (const board of config.boards) {
+        if (board.url === best.baseURL) best.boardName = board.name
       }
       // 오늘 생성된 게시글의 수
       const start = moment().startOf('day')
