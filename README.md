@@ -1,8 +1,6 @@
 # JAMPOT - 잼팟
 * https://jampot.kr
 * 잼팟은 오픈소스 커뮤니티 사이트입니다.
-# Getting Started
-작성 예정입니다.
 # Skill
 * JavaScript
 * Node.js - https://nodejs.org/ko/
