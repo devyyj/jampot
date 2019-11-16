@@ -1,6 +1,8 @@
-# jampot - 잼팟
+# JAMPOT - 잼팟
 * https://jampot.kr
 * 잼팟은 오픈소스 커뮤니티 사이트입니다.
+# Getting Started
+작성 예정입니다.
 # Skill
 * JavaScript
 * Node.js - https://nodejs.org/ko/
@@ -14,7 +16,7 @@
 * Pug - https://pugjs.org/
 * Bootstrap - https://getbootstrap.com/
 * Cloudflare - https://www.cloudflare.com/
-## Do To List
+## To Do List
 ### High Light
 - [ ] 게시글 카테고리 분류 -> 해시태그
   - [ ] 게시판 검색
