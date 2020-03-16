@@ -1,5 +1,5 @@
 # JAMPOT - 잼팟
-* https://jampot.kr
+* ~~https://jampot.kr~~ 현재 운영하고 있지 않습니다.
 * 잼팟은 오픈소스 커뮤니티 사이트입니다.
 # Skill
 * JavaScript
